@@ -78,6 +78,9 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [collectionView registerClass:[FORMTextFieldCell class]
        forCellWithReuseIdentifier:FORMTextFieldCellIdentifier];
 
+    [collectionView registerClass:[FORMTextFieldCell class]
+       forCellWithReuseIdentifier:FORMCountFieldCellIdentifier];
+
     [collectionView registerClass:[FORMSelectFieldCell class]
        forCellWithReuseIdentifier:FORMSelectFormFieldCellIdentifier];
 
@@ -185,8 +188,11 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         case FORMFieldTypeMultilineText:
         case FORMFieldTypeFloat:
         case FORMFieldTypeNumber:
-        case FORMFieldTypeCount:
             identifier = FORMTextFieldCellIdentifier;
+            break;
+
+        case FORMFieldTypeCount:
+            identifier = FORMCountFieldCellIdentifier;
             break;
 
         case FORMFieldTypeButton:
@@ -414,6 +420,23 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     return !_disabled;
 }
 
+- (void)collapseAllGroupsForCollectionView:(UICollectionView *)collectionView {
+    NSMutableArray *indexPaths = [NSMutableArray new];
+
+    [self.formData.groups enumerateObjectsUsingBlock:^(FORMGroup *formGroup, NSUInteger idx, BOOL *stop) {
+        if (![self.collapsedGroups containsObject:@(idx)]) {
+            for (NSInteger i = 0; i < formGroup.fields.count; i++) {
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:idx];
+                [indexPaths addObject:indexPath];
+            }
+            [self.collapsedGroups addObject:@(idx)];
+        }
+    }];
+
+    [collectionView deleteItemsAtIndexPaths:indexPaths];
+    [collectionView.collectionViewLayout invalidateLayout];
+}
+
 - (void)reloadWithDictionary:(NSDictionary *)dictionary {
     [self.formData.values setValuesForKeysWithDictionary:dictionary];
 
@@ -427,7 +450,23 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
                             BOOL shouldBeNil = ([value isEqual:[NSNull null]]);
 
                             if (field) {
-                                field.value = (shouldBeNil) ? nil : value;
+
+                                if (field.values.count) {
+                                    if (shouldBeNil) {
+                                        field.value = nil;
+                                    } else {
+                                        for (FORMFieldValue *fieldValue in field.values) {
+                                            if ([value isEqual:fieldValue.valueID]) {
+                                                field.value = fieldValue;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                } else {
+                                    field.value = (shouldBeNil) ? nil : value;
+                                }
+
                                 if (indexPath) {
                                     [updatedIndexPaths addObject:indexPath];
                                 }

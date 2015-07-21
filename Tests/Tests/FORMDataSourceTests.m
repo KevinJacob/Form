@@ -199,14 +199,29 @@
     FORMDataSource *dataSource = [[FORMDataSource alloc] initWithJSON:JSON
                                                        collectionView:nil
                                                                layout:nil
-                                                               values:nil
+                                                               values:@{@"username": @0}
                                                              disabled:YES];
 
+    FORMField *usernameField = [dataSource fieldWithID:@"username" includingHiddenFields:YES];
+    FORMFieldValue *usernameValue = usernameField.value;
+    XCTAssertTrue([usernameValue isKindOfClass:[FORMFieldValue class]]);
+
     [dataSource reloadWithDictionary:@{@"first_name" : @"Elvis",
-                                       @"last_name" : @"Nunez"}];
+                                       @"last_name" : @"Nunez",
+                                       @"username" : @1}];
 
     FORMField *field = [dataSource fieldWithID:@"display_name" includingHiddenFields:YES];
     XCTAssertEqualObjects(field.value, @"Elvis Nunez");
+
+    usernameValue = usernameField.value;
+    XCTAssertTrue([usernameValue isKindOfClass:[FORMFieldValue class]]);
+    XCTAssertEqualObjects(usernameValue.valueID, @1);
+
+    [dataSource reloadWithDictionary:@{@"username" : @4}];
+    XCTAssertNil(usernameValue.value);
+
+    [dataSource reloadWithDictionary:@{@"username" : [NSNull null]}];
+    XCTAssertNil(usernameValue.value);
 }
 
 #pragma mark - testResetDynamicSectionsWithDictionary
@@ -879,6 +894,21 @@
     XCTAssertEqualObjects(priceTarget.targetID, @"tickets[1].total");
     XCTAssertEqualObjects(totalField.formula, @"tickets[1].quantity * tickets[1].price");
     XCTAssertEqualObjects(totalField.value, @"300");
+}
+
+- (void)testCollapseAllGroups{
+    NSArray *JSON = [NSJSONSerialization JSONObjectWithContentsOfFile:@"forms.json"
+                                                             inBundle:[NSBundle bundleForClass:[self class]]];
+    
+    FORMDataSource *dataSource = [[FORMDataSource alloc] initWithJSON:JSON
+                                                       collectionView:nil
+                                                               layout:nil
+                                                               values:nil
+                                                             disabled:YES];
+    
+    [dataSource collapseAllGroupsForCollectionView:nil];
+    
+    XCTAssertEqual([dataSource.collapsedGroups count], [dataSource.groups count]);
 }
 
 @end
