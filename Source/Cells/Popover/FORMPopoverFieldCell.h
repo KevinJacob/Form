@@ -11,6 +11,6 @@
 - (instancetype)initWithFrame:(CGRect)frame contentViewController:(UIViewController *)controller
                andContentSize:(CGSize)contentSize NS_DESIGNATED_INITIALIZER;
 
-- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMField *)field;
+- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMFields *)field;
 
 @end

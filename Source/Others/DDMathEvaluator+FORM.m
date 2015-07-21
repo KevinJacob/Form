@@ -1,7 +1,6 @@
 #import "DDMathEvaluator+FORM.h"
 #import "DDExpression.h"
 #import "_DDVariableExpression.h"
-@import HYPMathParser._DDVariableExpression;
 
 @implementation DDMathEvaluator (FORM)
 

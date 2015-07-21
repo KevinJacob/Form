@@ -73,7 +73,7 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
 
 #pragma mark - FORMBaseFormFieldCell
 
-- (void)updateWithField:(FORMField *)field {
+- (void)updateWithField:(FORMFields *)field {
     [super updateWithField:field];
 
     FORMFieldValue *confirmValue = [FORMFieldValue new];
@@ -99,7 +99,7 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
     self.iconImageView.image = [self fieldIcon];
 }
 
-- (NSDateFormatterStyle)dateStyleForField:(FORMField *)field {
+- (NSDateFormatterStyle)dateStyleForField:(FORMFields *)field {
 
     switch (field.type) {
         case FORMFieldTypeDate:
@@ -114,7 +114,7 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
     }
 }
 
-- (NSDateFormatterStyle)timeStyleForField:(FORMField *)field {
+- (NSDateFormatterStyle)timeStyleForField:(FORMFields *)field {
 
     switch (field.type) {
         case FORMFieldTypeDate:
@@ -155,7 +155,7 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
 
 #pragma mark - FORMPopoverFormFieldCell
 
-- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMField *)field {
+- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMFields *)field {
     self.fieldValuesController.field = self.field;
 
     if (self.field.info) {

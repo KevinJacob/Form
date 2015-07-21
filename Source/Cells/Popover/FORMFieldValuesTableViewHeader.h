@@ -1,6 +1,6 @@
 @import UIKit;
 
-#import "FORMField.h"
+#import "FORMFields.h"
 
 static const CGFloat FORMFieldValuesHeaderWidth = 320.0f;
 static const CGFloat FORMFieldValuesHeaderHeight = 66.0f;
@@ -11,7 +11,7 @@ static NSString * const FORMFieldValuesTableViewHeaderIdentifier = @"FORMFieldVa
 
 @interface FORMFieldValuesTableViewHeader : UITableViewHeaderFooterView
 
-@property (nonatomic, weak) FORMField *field;
+@property (nonatomic, weak) FORMFields *field;
 
 @property (nonatomic, readonly) CGFloat labelHeight;
 

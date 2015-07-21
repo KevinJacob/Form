@@ -78,7 +78,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
 #pragma mark - FORMPopoverFormFieldCell
 
-- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMField *)field {
+- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMFields *)field {
     abort();
 }
 
@@ -88,7 +88,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
     self.fieldValueLabel.enabled = !disabled;
 }
 
-- (void)updateWithField:(FORMField *)field {
+- (void)updateWithField:(FORMFields *)field {
     [super updateWithField:field];
 
     self.iconImageView.hidden = field.disabled;

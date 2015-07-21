@@ -1,7 +1,7 @@
 #import "FORMFieldValuesTableViewController.h"
 
 #import "FORMFieldValue.h"
-#import "FORMField.h"
+#import "FORMFields.h"
 #import "FORMFieldValuesTableViewHeader.h"
 #import "FORMFieldValueCell.h"
 
@@ -25,11 +25,12 @@
 
 #pragma mark - Setters
 
-- (void)setField:(FORMField *)field {
+- (void)setField:(FORMFields *)field {
     _field = field;
 
     self.values = [NSArray arrayWithArray:field.values];
     self.headerView.field = field;
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     [self.tableView reloadData];
 }
 

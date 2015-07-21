@@ -56,7 +56,7 @@ static const CGFloat FORMTextFormFieldCellLabelMarginX = 5.0f;
     [self updateFieldWithDisabled:disabled];
 }
 
-- (void)setField:(FORMField *)field {
+- (void)setField:(FORMFields *)field {
     _field = field;
 
     [self updateWithField:field];
@@ -68,7 +68,7 @@ static const CGFloat FORMTextFormFieldCellLabelMarginX = 5.0f;
     abort();
 }
 
-- (void)updateWithField:(FORMField *)field {
+- (void)updateWithField:(FORMFields *)field {
     self.headingLabel.hidden = (field.sectionSeparator);
     self.headingLabel.text = field.title;
 

@@ -1,6 +1,6 @@
 @import Foundation;
 
-@class FORMField;
+@class FORMFields;
 @class FORMSection;
 
 @interface FORMGroup : NSObject

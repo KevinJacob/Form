@@ -13,6 +13,10 @@ typedef NS_ENUM(NSInteger, FORMFieldType) {
     FORMFieldTypeDate,
     FORMFieldTypeDateTime,
     FORMFieldTypeTime,
+    FORMFieldTypeSignature,
+    FORMFieldTypeMultilineText,
+    FORMFieldTypeCheckbox,
+    FORMFieldTypeLabel,
     FORMFieldTypeFloat,
     FORMFieldTypeNumber,
     FORMFieldTypeButton,
@@ -20,7 +24,7 @@ typedef NS_ENUM(NSInteger, FORMFieldType) {
     FORMFieldTypeCustom
 };
 
-@interface FORMField : NSObject
+@interface FORMFields : NSObject
 
 @property (nonatomic) NSString *fieldID;
 @property (nonatomic) NSString *title;
@@ -53,7 +57,7 @@ typedef NS_ENUM(NSInteger, FORMFieldType) {
                           disabled:(BOOL)disabled
                  disabledFieldsIDs:(NSArray *)disabledFieldsIDs NS_DESIGNATED_INITIALIZER;
 
-+ (FORMField *)fieldAtIndexPath:(NSIndexPath *)indexPath inSection:(FORMSection *)section;
++ (FORMFields *)fieldAtIndexPath:(NSIndexPath *)indexPath inSection:(FORMSection *)section;
 
 - (FORMFieldType)typeFromTypeString:(NSString *)typeString;
 

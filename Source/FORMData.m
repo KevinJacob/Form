@@ -2,7 +2,7 @@
 
 #import "FORMGroup.h"
 #import "FORMSection.h"
-#import "FORMField.h"
+#import "FORMFields.h"
 #import "FORMFieldValue.h"
 #import "FORMTarget.h"
 #import "DDMathParser.h"
@@ -16,7 +16,7 @@
 #import "DDMathEvaluator+FORM.h"
 #import "NSString+HYPRelationshipParser.h"
 #import "NSDictionary+HYPNestedAttributes.h"
-@import HYPMathParser.DDExpression;
+#import "DDExpression.h"
 
 @interface FORMData ()
 
@@ -189,7 +189,7 @@
                         }
 
                         if (existingSection) {
-                            FORMField *field = [self fieldWithID:valueID
+                            FORMFields *field = [self fieldWithID:valueID
                                            includingHiddenFields:YES];
                             field.value = (self.values)[valueID];
                         } else {
@@ -203,7 +203,7 @@
         }
 
 
-        for (FORMField *field in group.fields) {
+        for (FORMFields *field in group.fields) {
 
             if (field.hidden){
                 [hideTargets addObject:[FORMTarget hideFieldTargetWithID:field.fieldID]];
@@ -284,7 +284,7 @@
 
             if (target.type == FORMTargetTypeField) {
 
-                FORMField *field = [self fieldWithID:target.targetID
+                FORMFields *field = [self fieldWithID:target.targetID
                                includingHiddenFields:YES];
                 [self.hiddenFieldsAndFieldIDsDictionary addEntriesFromDictionary:@{target.targetID : field}];
 
@@ -300,7 +300,7 @@
         if ([self evaluateCondition:target.condition]) {
             if (target.type == FORMTargetTypeField) {
 
-                FORMField *field = [self fieldWithID:target.targetID
+                FORMFields *field = [self fieldWithID:target.targetID
                                includingHiddenFields:NO];
                 if (field) {
                     FORMSection *section = [self sectionWithID:field.section.sectionID];
@@ -326,7 +326,7 @@
 
     for (FORMGroup *group in self.groups) {
         for (FORMSection *section in group.sections) {
-            for (FORMField *field in section.fields) {
+            for (FORMFields *field in section.fields) {
                 BOOL fieldIsValid = (field.validation && [field validate] != FORMValidationResultTypeValid);
                 if (fieldIsValid) {
                     invalidFormFields[field.fieldID] = field;
@@ -343,7 +343,7 @@
 
     for (FORMGroup *group in self.groups) {
         for (FORMSection *section in group.sections) {
-            for (FORMField *field in section.fields) {
+            for (FORMFields *field in section.fields) {
                 if (field.validation && field.validation.isRequired) {
                     requiredFields[field.fieldID] = field;
                 }
@@ -358,14 +358,14 @@
     return self.requiredFields;
 }
 
-- (NSMutableDictionary *)valuesForFormula:(FORMField *)field {
+- (NSMutableDictionary *)valuesForFormula:(FORMFields *)field {
     NSMutableDictionary *values = [NSMutableDictionary new];
 
     NSString *formula = field.formula;
     NSArray *fieldIDs = [formula hyp_variables];
 
     for (NSString *fieldID in fieldIDs) {
-        FORMField *targetField = [self fieldWithID:fieldID
+        FORMFields *targetField = [self fieldWithID:fieldID
                              includingHiddenFields:YES];
         id value = targetField.value;
         if (value) {
@@ -440,7 +440,7 @@
 
         for (FORMSection *aSection in group.sections) {
 
-            for (__unused FORMField *aField in aSection.fields) {
+            for (__unused FORMFields *aField in aSection.fields) {
                 if ([aSection.sectionID isEqualToString:sectionID]) {
                     foundSection = aSection;
                     [indexPaths addObject:[NSIndexPath indexPathForRow:fieldsIndex inSection:groupIndex]];
@@ -470,17 +470,17 @@
 
 #pragma mark - Field
 
-- (FORMField *)fieldWithID:(NSString *)fieldID
+- (FORMFields *)fieldWithID:(NSString *)fieldID
      includingHiddenFields:(BOOL)includingHiddenFields {
     NSParameterAssert(fieldID);
 
-    FORMField *foundField = nil;
+    FORMFields *foundField = nil;
 
     NSInteger groupIndex = 0;
     for (FORMGroup *group in self.groups) {
 
         NSUInteger fieldIndex = 0;
-        for (FORMField *field in group.fields) {
+        for (FORMFields *field in group.fields) {
 
             if ([field.fieldID isEqualToString:fieldID]) {
                 foundField = field;
@@ -502,17 +502,17 @@
 
 - (void)fieldWithID:(NSString *)fieldID
 includingHiddenFields:(BOOL)includingHiddenFields
-         completion:(void (^)(FORMField *field, NSIndexPath *indexPath))completion {
+         completion:(void (^)(FORMFields *field, NSIndexPath *indexPath))completion {
     NSParameterAssert(fieldID);
 
-    __block FORMField *foundField = nil;
+    __block FORMFields *foundField = nil;
     __block NSIndexPath *indexPath = nil;
 
     NSInteger groupIndex = 0;
     for (FORMGroup *group in self.groups) {
 
         NSUInteger fieldIndex = 0;
-        for (FORMField *field in group.fields) {
+        for (FORMFields *field in group.fields) {
 
             if ([field.fieldID isEqualToString:fieldID]) {
                 indexPath = [NSIndexPath indexPathForItem:fieldIndex
@@ -600,7 +600,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
             NSInteger newRelationshipIndex = relationshipIndex;
             currentSection.sectionID = [currentSection.sectionID hyp_updateRelationshipIndex:newRelationshipIndex];
 
-            for (FORMField *field in currentSection.fields) {
+            for (FORMFields *field in currentSection.fields) {
                 field.fieldID = [field.fieldID hyp_updateRelationshipIndex:newRelationshipIndex];
             }
             relationshipIndex++;
@@ -608,11 +608,11 @@ includingHiddenFields:(BOOL)includingHiddenFields
     }
 }
 
-- (FORMField *)hiddenFieldWithFieldID:(NSString *)fieldID {
+- (FORMFields *)hiddenFieldWithFieldID:(NSString *)fieldID {
     NSArray *hiddenFields = [self.hiddenFieldsAndFieldIDsDictionary allValues];
-    FORMField *foundField;
+    FORMFields *foundField;
 
-    for (FORMField *formField in hiddenFields) {
+    for (FORMFields *formField in hiddenFields) {
         if ([formField.fieldID isEqualToString:fieldID]) {
             foundField = formField;
         }
@@ -623,7 +623,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
         NSArray *deletedSections = [self.hiddenSections allValues];
 
         for (FORMSection *section in deletedSections) {
-            for (FORMField *field in section.fields) {
+            for (FORMFields *field in section.fields) {
                 if ([field.fieldID isEqualToString:fieldID]) {
                     foundField = field;
                 }
@@ -642,7 +642,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
     __block NSInteger index = 0;
 
     NSUInteger idx = 0;
-    for (FORMField *aField in section.fields) {
+    for (FORMFields *aField in section.fields) {
         if ([aField.fieldID isEqualToString:fieldID]) {
             index = idx;
             break;
@@ -665,7 +665,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
         __block BOOL shouldLookForField = YES;
         if (target.type == FORMTargetTypeField) {
             [self fieldWithID:target.targetID includingHiddenFields:NO
-                   completion:^(FORMField *field, NSIndexPath *indexPath) {
+                   completion:^(FORMFields *field, NSIndexPath *indexPath) {
                        shouldLookForField = (field == nil);
                    }];
         }
@@ -674,7 +674,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
             BOOL foundSection = NO;
 
             if (target.type == FORMTargetTypeField) {
-                FORMField *field = (self.hiddenFieldsAndFieldIDsDictionary)[target.targetID];
+                FORMFields *field = (self.hiddenFieldsAndFieldIDsDictionary)[target.targetID];
                 if (field) {
                     [self updateValuesFromFields:@[field]];
 
@@ -706,9 +706,9 @@ includingHiddenFields:(BOOL)includingHiddenFields
             }
 
             if (target.type == FORMTargetTypeField && foundSection) {
-                FORMField *field = (self.hiddenFieldsAndFieldIDsDictionary)[target.targetID];
+                FORMFields *field = (self.hiddenFieldsAndFieldIDsDictionary)[target.targetID];
                 if (field) {
-                    [self fieldWithID:target.targetID includingHiddenFields:YES completion:^(FORMField *field, NSIndexPath *indexPath) {
+                    [self fieldWithID:target.targetID includingHiddenFields:YES completion:^(FORMFields *field, NSIndexPath *indexPath) {
                         if (field) {
                             [self updateValuesFromFields:@[field]];
                             [insertedIndexPaths addObject:indexPath];
@@ -743,7 +743,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
         if (![self evaluateCondition:target.condition]) continue;
 
         if (target.type == FORMTargetTypeField) {
-            FORMField *field = [self fieldWithID:target.targetID includingHiddenFields:NO];
+            FORMFields *field = [self fieldWithID:target.targetID includingHiddenFields:NO];
             if (field && !(self.hiddenFieldsAndFieldIDsDictionary)[field.fieldID]) {
                 [deletedFields addObject:field];
                 [self.hiddenFieldsAndFieldIDsDictionary addEntriesFromDictionary:@{field.fieldID : field}];
@@ -754,7 +754,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
             if (section && !(self.hiddenSections)[section.sectionID]) {
                 [deletedSections addObject:section];
                 [self.hiddenSections addEntriesFromDictionary:@{section.sectionID : section}];
-                for (FORMField *field in section.fields) {
+                for (FORMFields *field in section.fields) {
                     [self.values removeObjectForKey:field.fieldID];
                 }
 
@@ -767,9 +767,9 @@ includingHiddenFields:(BOOL)includingHiddenFields
 
     NSMutableSet *deletedIndexPaths = [NSMutableSet set];
 
-    for (FORMField *field in deletedFields) {
+    for (FORMFields *field in deletedFields) {
         [self fieldWithID:field.fieldID includingHiddenFields:YES
-               completion:^(FORMField *field, NSIndexPath *indexPath) {
+               completion:^(FORMFields *field, NSIndexPath *indexPath) {
                    if (field) {
                        [deletedIndexPaths addObject:indexPath];
                    }
@@ -787,7 +787,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
 
     NSMutableSet *resetSections = [NSMutableSet new];
 
-    for (FORMField *field in deletedFields) {
+    for (FORMFields *field in deletedFields) {
         [self indexForFieldWithID:field.fieldID
                   inSectionWithID:field.section.sectionID
                        completion:^(FORMSection *section, NSInteger index) {
@@ -840,9 +840,9 @@ includingHiddenFields:(BOOL)includingHiddenFields
         }
 
 
-        __block FORMField *field = nil;
+        __block FORMFields *field = nil;
 
-        [self fieldWithID:target.targetID includingHiddenFields:YES completion:^(FORMField *foundField, NSIndexPath *indexPath) {
+        [self fieldWithID:target.targetID includingHiddenFields:YES completion:^(FORMFields *foundField, NSIndexPath *indexPath) {
             if (foundField) {
                 field = foundField;
                 if (indexPath) {
@@ -880,7 +880,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
                     BOOL isNumericField = (field.type == FORMFieldTypeFloat || field.type == FORMFieldTypeNumber || field.type == FORMFieldTypeCount);
                     NSString *defaultEmptyValue = (isNumericField) ? @"0" : @"";
 
-                    FORMField *targetField = [self fieldWithID:fieldID includingHiddenFields:YES];
+                    FORMFields *targetField = [self fieldWithID:fieldID includingHiddenFields:YES];
 
                     if (targetField.type == FORMFieldTypeSelect) {
 
@@ -959,7 +959,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
         if (target.type == FORMTargetTypeSection) continue;
         if ((self.hiddenFieldsAndFieldIDsDictionary)[target.targetID]) continue;
 
-        [self fieldWithID:target.targetID includingHiddenFields:YES completion:^(FORMField *field, NSIndexPath *indexPath) {
+        [self fieldWithID:target.targetID includingHiddenFields:YES completion:^(FORMFields *field, NSIndexPath *indexPath) {
             if (field) {
                 field.disabled = !enabled;
                 if (indexPath) {
@@ -1119,7 +1119,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
                                                          isLastSection:YES];
         section.group = group;
 
-        for (FORMField *field in section.fields) {
+        for (FORMFields *field in section.fields) {
             field.value = [self.values andy_valueForKey:field.fieldID];
             BOOL isValidField = (![field.fieldID hyp_containsString:@".remove"]);
             if (isValidField) {
@@ -1213,7 +1213,7 @@ includingHiddenFields:(BOOL)includingHiddenFields
 }
 
 - (void)updateValuesFromFields:(NSArray *)fields {
-    for (FORMField *field in fields) {
+    for (FORMFields *field in fields) {
         id value;
 
         if ([field.value isKindOfClass:[FORMFieldValue class]]) {

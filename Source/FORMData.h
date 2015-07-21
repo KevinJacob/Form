@@ -1,6 +1,6 @@
 @import Foundation;
 
-#import "FORMField.h"
+#import "FORMFields.h"
 #import "FORMGroup.h"
 
 static NSString * const FORMHideTooltips = @"FORMHideTooltips";
@@ -25,7 +25,7 @@ static NSString * const FORMHideTooltips = @"FORMHideTooltips";
 
 @property (nonatomic, readonly, copy) NSDictionary *requiredFormFields;
 
-- (NSMutableDictionary *)valuesForFormula:(FORMField *)field;
+- (NSMutableDictionary *)valuesForFormula:(FORMFields *)field;
 
 - (FORMGroup *)groupWithID:(NSString *)groupID;
 
@@ -38,11 +38,11 @@ static NSString * const FORMHideTooltips = @"FORMHideTooltips";
             inSectionWithID:(NSString *)sectionID
                  completion:(void (^)(FORMSection *section, NSInteger index))completion;
 
-- (FORMField *)fieldWithID:(NSString *)fieldID
+- (FORMFields *)fieldWithID:(NSString *)fieldID
      includingHiddenFields:(BOOL)includingHiddenFields;
 
 - (void)fieldWithID:(NSString *)fieldID includingHiddenFields:(BOOL)includingHiddenFields
-         completion:(void (^)(FORMField *field, NSIndexPath *indexPath))completion;
+         completion:(void (^)(FORMFields *field, NSIndexPath *indexPath))completion;
 
 - (void)removeSection:(FORMSection *)removedSection
      inCollectionView:(UICollectionView *)collectionView;

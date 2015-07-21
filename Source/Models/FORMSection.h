@@ -2,7 +2,7 @@
 @import Foundation;
 
 @class FORMGroup;
-@class FORMField;
+@class FORMFields;
 
 typedef NS_ENUM(NSInteger, FORMSectionType) {
     FORMSectionTypeDefault = 0,
@@ -28,14 +28,14 @@ typedef NS_ENUM(NSInteger, FORMSectionType) {
                  disabledFieldsIDs:(NSArray *)disabledFieldsIDs
                      isLastSection:(BOOL)isLastSection NS_DESIGNATED_INITIALIZER;
 
-+ (void)sectionAndIndexForField:(FORMField *)field
++ (void)sectionAndIndexForField:(FORMFields *)field
                        inGroups:(NSArray *)groups
                      completion:(void (^)(BOOL found,
                                           FORMSection *section,
                                           NSInteger index))completion;
 
 - (NSInteger)indexInGroups:(NSArray *)groups;
-- (void)removeField:(FORMField *)field inGroups:(NSArray *)groups;
+- (void)removeField:(FORMFields *)field inGroups:(NSArray *)groups;
 - (void)resetFieldPositions;
 
 @end

@@ -5,6 +5,7 @@
 #import "FORMFieldValue.h"
 #import "HYPImagePicker.h"
 #import "HYPImageFormFieldCell.h"
+#import "FORMSignatureFieldCell.h"
 #import "FORMData.h"
 #import "FORMTextFieldCell.h"
 #import "FORMDefaultStyle.h"
@@ -14,11 +15,15 @@
 #import "UIViewController+HYPKeyboardToolbar.h"
 #import "NSJSONSerialization+ANDYJSONFile.h"
 
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed : ((float)((rgbValue & 0xFF0000) >> 16))/255.0 green : ((float)((rgbValue & 0xFF00) >> 8))/255.0 blue : ((float)(rgbValue & 0xFF))/255.0 alpha : 1.0]
+
 @interface HYPSampleCollectionViewController () <HYPImagePickerDelegate>
 
 @property (nonatomic) HYPImagePicker *imagePicker;
 
 @end
+
+static const CGFloat FORMSignatureFieldMargin = 5.0f;
 
 @implementation HYPSampleCollectionViewController
 
@@ -31,8 +36,8 @@
                       disabled:YES];
     if (!self) return nil;
 
-    [self.collectionView registerClass:[HYPImageFormFieldCell class]
-            forCellWithReuseIdentifier:HYPImageFormFieldCellIdentifier];
+    [self.collectionView registerClass:[FORMSignatureFieldCell class]
+            forCellWithReuseIdentifier:FORMSignatureFieldCellIdentifier];
 
     return self;
 }
@@ -54,27 +59,41 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.navigationItem.title = @"Form";
-
+    self.navigationItem.title = @"UI Test Form";
+    
+    [[UINavigationBar appearance] setBarTintColor:UIColorFromRGB(0x1A242F)];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{
+                                                           NSForegroundColorAttributeName:[UIColor whiteColor],
+                                                           NSBackgroundColorAttributeName:[UIColor whiteColor],
+                                                           }];
+    
     self.collectionView.contentInset = UIEdgeInsetsMake(20.0f, 0.0f, 0.0f, 0.0f);
 
-    self.collectionView.backgroundColor = [UIColor colorFromHex:@"DAE2EA"];
+    self.collectionView.backgroundColor = [UIColor lightGrayColor];
 
-    UIBarButtonItem *printValuesButton = [[UIBarButtonItem alloc] initWithTitle:@"Show Values"
+    //[self setUpDataSource];
+    
+    
+    UIBarButtonItem *cancel = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                           style:UIBarButtonItemStyleDone
                                                                          target:self
-                                                                         action:@selector(printValuesAction)];
-    self.navigationItem.rightBarButtonItem = printValuesButton;
-
-    [self setUpDataSource];
+                                                                         action:nil];
+    self.navigationItem.leftBarButtonItem = cancel;
+    
+    UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"Save"
+                                                                          style:UIBarButtonItemStyleDone
+                                                                         target:self
+                                                                         action:nil];
+    self.navigationItem.rightBarButtonItem = save;
 }
 
 - (void)setUpDataSource {
     self.dataSource.configureCellForItemAtIndexPathBlock = ^(FORMField *field, UICollectionView *collectionView, NSIndexPath *indexPath) {
         id cell;
-        BOOL isImageCell = (field.type == FORMFieldTypeCustom && [field.typeString isEqual:@"image"]);
+        BOOL isImageCell = (field.type == FORMFieldTypeCustom && [field.typeString isEqual:@"signature"]);
         if (isImageCell) {
-            cell = [collectionView dequeueReusableCellWithReuseIdentifier:HYPImageFormFieldCellIdentifier
+            cell = [collectionView dequeueReusableCellWithReuseIdentifier:FORMSignatureFieldCellIdentifier
                                                              forIndexPath:indexPath];
         }
         return cell;
@@ -105,7 +124,11 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    [self configureToolbar];
+    [self.dataSource enable];
+    FORMTarget *target;
+    target = [FORMTarget showFieldTargetWithID:@"signature"];
+    [self.dataSource processTargets:@[target]];
+    //[self configureToolbar];
 }
 
 - (void)configureToolbar {
@@ -145,18 +168,18 @@
     [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
-#pragma mark - UICollectionViewDelegate
+#pragma mark - UICollectionViewDelegate99
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     FORMField *field = [self.dataSource fieldAtIndexPath:indexPath];
-    return (field.type == FORMFieldTypeCustom && [field.typeString isEqual:@"image"]);
+    return (field.type == FORMFieldTypeCustom && [field.typeString isEqual:@"signature"]);
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     FORMField *field = [self.dataSource fieldAtIndexPath:indexPath];
 
-    if (field.type == FORMFieldTypeCustom && [field.typeString isEqual:@"image"]) {
-        [self.imagePicker invokeCamera];
+    if (field.type == FORMFieldTypeCustom && [field.typeString isEqual:@"signature"]) {
+        [self displaySignatureViewForRowAtIndexPath:indexPath];
     }
 }
 
@@ -167,7 +190,63 @@
     NSLog(@"picture gotten");
 }
 
+#pragma mark - HYPImagePickerDelegate
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    if (self.signaturePanelExposed)
+    {
+        self.signatureView.topBar.frame = CGRectMake(0,
+                                                     0,
+                                                     self.view.frame.size.width - (FORMSignatureFieldMargin * 4),
+                                                     44);
+        self.signatureView.frame = CGRectMake(self.view.frame.origin.x + (FORMSignatureFieldMargin * 2),
+                                              self.view.frame.size.height/2 - self.signatureView.frame.size.height/2,
+                                              self.view.frame.size.width - (FORMSignatureFieldMargin * 4),
+                                              self.signatureView.frame.size.height);
+    }
+}
+
+
+
+- (void)displaySignatureViewForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    FORMSignatureFieldCell *sigCell = (FORMSignatureFieldCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
+    sigCell.delegate = self;
+    
+    if(![sigCell.signatureView isSigned])
+    {
+        [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
+        self.collectionView.scrollEnabled = NO;
+        self.collectionView.alpha = 0.5;
+        self.collectionView.userInteractionEnabled = NO;
+        self.signatureView = sigCell.signatureView;
+        
+        self.signatureView.topBar.frame = CGRectMake(0,
+                                                     0,
+                                                     self.view.frame.size.width - (FORMSignatureFieldMargin * 4),
+                                                     44);
+        
+        self.signatureView.frame = CGRectMake(self.view.frame.origin.x + (FORMSignatureFieldMargin * 2),
+                                              self.view.frame.size.height/2 - self.signatureView.frame.size.height/2,
+                                              self.view.frame.size.width - (FORMSignatureFieldMargin * 4),
+                                              self.signatureView.frame.size.height);
+        
+        [self.view addSubview:self.signatureView];
+        self.signaturePanelExposed = YES;
+    }
+}
+
 #pragma mark - Actions
+
+- (void)signatureViewClosed
+{
+    self.collectionView.scrollEnabled = YES;
+    self.collectionView.alpha = 1;
+    self.collectionView.userInteractionEnabled = YES;
+    self.signaturePanelExposed = NO;
+}
+
 
 - (void)updateButtonAction {
     [self.dataSource reloadWithDictionary:@{@"first_name" : @"Hodo",

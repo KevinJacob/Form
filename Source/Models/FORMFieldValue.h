@@ -1,6 +1,6 @@
 @import Foundation;
 
-#import "FORMField.h"
+#import "FORMFields.h"
 
 @interface FORMFieldValue : NSObject
 
@@ -8,7 +8,7 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *info;
 @property (nonatomic) NSArray *targets;
-@property (nonatomic) FORMField *field;
+@property (nonatomic) FORMFields *field;
 @property (nonatomic) NSNumber *value;
 @property (nonatomic) BOOL defaultValue;
 

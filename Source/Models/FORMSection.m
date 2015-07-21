@@ -1,5 +1,5 @@
 #import "FORMSection.h"
-#import "FORMField.h"
+#import "FORMFields.h"
 #import "FORMGroup.h"
 #import "NSDictionary+ANDYSafeValue.h"
 #import "FORMTarget.h"
@@ -25,7 +25,7 @@
 
     [dataSourceFields enumerateObjectsUsingBlock:^(NSDictionary *fieldDict, NSUInteger fieldIndex, BOOL *stop) {
 
-        FORMField *field = [[FORMField  alloc] initWithDictionary:fieldDict
+        FORMFields *field = [[FORMFields  alloc] initWithDictionary:fieldDict
                                                          position:fieldIndex
                                                          disabled:disabled
                                                 disabledFieldsIDs:disabledFieldsIDs];
@@ -34,7 +34,7 @@
     }];
 
     if (_type == FORMSectionTypeDynamic) {
-        FORMField *field = [FORMField new];
+        FORMFields *field = [FORMFields new];
         field.position = @(fields.count);
         field.section = self;
         field.fieldID = [NSString stringWithFormat:@"%@.add", self.sectionID];
@@ -66,7 +66,7 @@
     }
 
     if (!isLastSection || _type == FORMSectionTypeDynamic) {
-        FORMField *field = [FORMField new];
+        FORMFields *field = [FORMFields new];
         field.sectionSeparator = YES;
         field.position = @(fields.count);
         field.section = self;
@@ -91,7 +91,7 @@
 
 #pragma mark Class
 
-+ (void)sectionAndIndexForField:(FORMField *)field
++ (void)sectionAndIndexForField:(FORMFields *)field
                        inGroups:(NSArray *)groups
                      completion:(void (^)(BOOL found,
                                           FORMSection *section,
@@ -101,7 +101,7 @@
 
     __block NSInteger index = 0;
     __block BOOL found = NO;
-    [section.fields enumerateObjectsUsingBlock:^(FORMField *aField, NSUInteger idx, BOOL *stop) {
+    [section.fields enumerateObjectsUsingBlock:^(FORMFields *aField, NSUInteger idx, BOOL *stop) {
         if ([aField.fieldID isEqualToString:field.fieldID]) {
             index = idx;
             found = YES;
@@ -138,11 +138,11 @@
     return index;
 }
 
-- (void)removeField:(FORMField *)field inGroups:(NSArray *)groups {
+- (void)removeField:(FORMFields *)field inGroups:(NSArray *)groups {
     __block NSInteger index = 0;
     __block BOOL found = NO;
 
-    [self.fields enumerateObjectsUsingBlock:^(FORMField *currentField, NSUInteger idx, BOOL *stop) {
+    [self.fields enumerateObjectsUsingBlock:^(FORMFields *currentField, NSUInteger idx, BOOL *stop) {
         if ([currentField.fieldID isEqualToString:field.fieldID]) {
             index = idx;
             found = YES;
@@ -153,14 +153,14 @@
 }
 
 - (void)resetFieldPositions {
-    [self.fields enumerateObjectsUsingBlock:^(FORMField *field, NSUInteger idx, BOOL *stop) {
+    [self.fields enumerateObjectsUsingBlock:^(FORMFields *field, NSUInteger idx, BOOL *stop) {
         field.position = @(idx);
     }];
 }
 
 - (NSString *)description {
     NSMutableArray *fields = [NSMutableArray new];
-    for (FORMField *field in self.fields) {
+    for (FORMFields *field in self.fields) {
         if (field.fieldID) {
             [fields addObject:field.fieldID];
         } else if (field.sectionSeparator) {

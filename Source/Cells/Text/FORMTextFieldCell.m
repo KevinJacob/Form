@@ -168,7 +168,7 @@ static const NSInteger FORMTooltipNumberOfLines = 4;
     self.textField.enabled = !disabled;
 }
 
-- (void)updateWithField:(FORMField *)field {
+- (void)updateWithField:(FORMFields *)field {
     [super updateWithField:field];
 
     self.textField.hidden          = (field.sectionSeparator);
@@ -189,7 +189,7 @@ static const NSInteger FORMTooltipNumberOfLines = 4;
 
 #pragma mark - Private methods
 
-- (NSString *)rawTextForField:(FORMField *)field {
+- (NSString *)rawTextForField:(FORMFields *)field {
     NSString *rawText = field.value;
 
     if (field.value) {

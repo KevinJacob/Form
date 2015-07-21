@@ -15,6 +15,8 @@
 		14E49C401A99B7D600F19988 /* HYPSampleCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E49C311A99B7D600F19988 /* HYPSampleCollectionViewController.m */; };
 		14E49C411A99B7D600F19988 /* HYPImageFormFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E49C341A99B7D600F19988 /* HYPImageFormFieldCell.m */; };
 		1E5444BD0389FFEFBB7186A2 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45445B9B2AF71C6EB29E5561 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		26A242131B4D9EA300FB12F0 /* SignatureView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26A242121B4D9EA300FB12F0 /* SignatureView.m */; };
+		26A242221B4DA20500FB12F0 /* FORMSignatureFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26A242211B4DA20500FB12F0 /* FORMSignatureFieldCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,10 @@
 		14E49C331A99B7D600F19988 /* HYPImageFormFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HYPImageFormFieldCell.h; sourceTree = "<group>"; };
 		14E49C341A99B7D600F19988 /* HYPImageFormFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HYPImageFormFieldCell.m; sourceTree = "<group>"; };
 		24255EE596DCD2C0FE5C4CFB /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		26A242111B4D9EA300FB12F0 /* SignatureView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignatureView.h; sourceTree = "<group>"; };
+		26A242121B4D9EA300FB12F0 /* SignatureView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignatureView.m; sourceTree = "<group>"; };
+		26A242201B4DA20500FB12F0 /* FORMSignatureFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FORMSignatureFieldCell.h; path = ../../../../Source/Cells/Views/FORMSignatureFieldCell.h; sourceTree = "<group>"; };
+		26A242211B4DA20500FB12F0 /* FORMSignatureFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FORMSignatureFieldCell.m; path = ../../../../Source/Cells/Views/FORMSignatureFieldCell.m; sourceTree = "<group>"; };
 		45445B9B2AF71C6EB29E5561 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C74849DF53D9C3C7FE00770 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,6 +59,7 @@
 				14E49BF81A99B75500F19988 /* Basic-ObjC */,
 				14E49BF71A99B75500F19988 /* Products */,
 				9A2CB4BACB8976C31DF24BCC /* Pods */,
+				26A2420F1B4D9EA300FB12F0 /* Submodules */,
 				9661221E81F7A73DE1DDD54C /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -127,8 +134,28 @@
 			children = (
 				14E49C331A99B7D600F19988 /* HYPImageFormFieldCell.h */,
 				14E49C341A99B7D600F19988 /* HYPImageFormFieldCell.m */,
+				26A242201B4DA20500FB12F0 /* FORMSignatureFieldCell.h */,
+				26A242211B4DA20500FB12F0 /* FORMSignatureFieldCell.m */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		26A2420F1B4D9EA300FB12F0 /* Submodules */ = {
+			isa = PBXGroup;
+			children = (
+				26A242101B4D9EA300FB12F0 /* SignatureView */,
+			);
+			name = Submodules;
+			path = ../../Source/Submodules;
+			sourceTree = "<group>";
+		};
+		26A242101B4D9EA300FB12F0 /* SignatureView */ = {
+			isa = PBXGroup;
+			children = (
+				26A242111B4D9EA300FB12F0 /* SignatureView.h */,
+				26A242121B4D9EA300FB12F0 /* SignatureView.m */,
+			);
+			path = SignatureView;
 			sourceTree = "<group>";
 		};
 		9661221E81F7A73DE1DDD54C /* Frameworks */ = {
@@ -269,10 +296,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26A242131B4D9EA300FB12F0 /* SignatureView.m in Sources */,
 				14E49C351A99B7D600F19988 /* AppDelegate.m in Sources */,
 				14E49C401A99B7D600F19988 /* HYPSampleCollectionViewController.m in Sources */,
 				14E49C411A99B7D600F19988 /* HYPImageFormFieldCell.m in Sources */,
 				14E49BFC1A99B75500F19988 /* main.m in Sources */,
+				26A242221B4DA20500FB12F0 /* FORMSignatureFieldCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,6 +395,7 @@
 				INFOPLIST_FILE = "Basic-ObjC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -378,6 +408,7 @@
 				INFOPLIST_FILE = "Basic-ObjC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

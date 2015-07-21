@@ -41,7 +41,7 @@ static const NSInteger FORMSelectMaxItemCount = 6;
 
 #pragma mark - FORMBaseFormFieldCell
 
-- (void)updateWithField:(FORMField *)field {
+- (void)updateWithField:(FORMFields *)field {
     [super updateWithField:field];
 
     if (field.value) {
@@ -67,7 +67,7 @@ static const NSInteger FORMSelectMaxItemCount = 6;
 #pragma mark - FORMPopoverFormFieldCell
 
 - (void)updateContentViewController:(UIViewController *)contentViewController
-                          withField:(FORMField *)field {
+                          withField:(FORMFields *)field {
     self.fieldValuesController.field = self.field;
 
     if (self.field.values.count <= FORMSelectMaxItemCount) {

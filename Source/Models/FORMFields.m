@@ -1,5 +1,5 @@
 #import "FORMGroup.h"
-#import "FORMField.h"
+#import "FORMFields.h"
 #import "FORMSection.h"
 #import "FORMValidator.h"
 #import "FORMFormatter.h"
@@ -16,7 +16,7 @@ static NSString * const FORMFieldSelectType = @"select";
 static NSString * const FORMInputValidatorSelector = @"validateString:text:";
 static NSString * const FORMFormatterSelector = @"formatString:reverse:";
 
-@implementation FORMField
+@implementation FORMFields
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary
                           position:(NSInteger)position
@@ -128,6 +128,10 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
         } break;
 
         case FORMFieldTypeText:
+        case FORMFieldTypeSignature:
+        case FORMFieldTypeMultilineText:
+        case FORMFieldTypeCheckbox:
+        case FORMFieldTypeLabel:
         case FORMFieldTypeSelect:
         case FORMFieldTypeButton:
         case FORMFieldTypeCustom:
@@ -161,7 +165,12 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
         case FORMFieldTypeCount:
             return @([self.value integerValue]);
 
+        case FORMFieldTypeSignature:
+            
         case FORMFieldTypeText:
+        case FORMFieldTypeMultilineText:
+        case FORMFieldTypeCheckbox:
+        case FORMFieldTypeLabel:
         case FORMFieldTypeSelect:
         case FORMFieldTypeDate:
         case FORMFieldTypeDateTime:
@@ -218,10 +227,12 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
     return formatter;
 }
 
+
 - (FORMFieldType)typeFromTypeString:(NSString *)typeString {
     if ([typeString isEqualToString:@"text"] ||
         [typeString isEqualToString:@"name"] ||
         [typeString isEqualToString:@"email"] ||
+        [typeString isEqualToString:@"singleline_text"] ||
         [typeString isEqualToString:@"password"]) {
         return FORMFieldTypeText;
     } else if ([typeString isEqualToString:@"select"]) {
@@ -232,6 +243,14 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
         return FORMFieldTypeDateTime;
     } else if ([typeString isEqualToString:@"time"]) {
         return FORMFieldTypeTime;
+    } else if ([typeString isEqualToString:@"signature"]) {
+        return FORMFieldTypeSignature;
+    } else if ([typeString isEqualToString:@"multiline_text"]) {
+        return FORMFieldTypeMultilineText;
+    } else if ([typeString isEqualToString:@"checkbox"]) {
+        return FORMFieldTypeCheckbox;
+    } else if ([typeString isEqualToString:@"label"]) {
+        return FORMFieldTypeLabel;
     } else if ([typeString isEqualToString:@"float"]) {
         return FORMFieldTypeFloat;
     } else if ([typeString isEqualToString:@"number"]) {
@@ -274,7 +293,7 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
     self.validationResultType = [validator validateFieldValue:self.value];
 
     if (self.validation.compareToFieldID.length) {
-        FORMField *field = [self.class fieldForFieldID:self.validation.compareToFieldID inSection:self.section];
+        FORMFields *field = [self.class fieldForFieldID:self.validation.compareToFieldID inSection:self.section];
         id dependantFieldValue = field.value;
         self.validationResultType = [validator validateFieldValue:self.value withDependentValue:dependantFieldValue withComparator:self.validation.compareRule];
     }
@@ -286,14 +305,14 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
 
 #pragma mark - Public Methods
 
-+ (FORMField *)fieldAtIndexPath:(NSIndexPath *)indexPath inSection:(FORMSection *)section {
-    FORMField *field = section.fields[indexPath.row];
++ (FORMFields *)fieldAtIndexPath:(NSIndexPath *)indexPath inSection:(FORMSection *)section {
+    FORMFields *field = section.fields[indexPath.row];
     return field;
 }
 
-+ (FORMField *)fieldForFieldID:(NSString *)fieldID inSection:(FORMSection *)section {
-    __block FORMField *formField;
-    [section.fields enumerateObjectsUsingBlock:^(FORMField *field, NSUInteger idx, BOOL *stop) {
++ (FORMFields *)fieldForFieldID:(NSString *)fieldID inSection:(FORMSection *)section {
+    __block FORMFields *formField;
+    [section.fields enumerateObjectsUsingBlock:^(FORMFields *field, NSUInteger idx, BOOL *stop) {
         if ([field.fieldID isEqualToString:fieldID]) {
             formField = field;
         }
@@ -309,7 +328,7 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
     BOOL found = NO;
     NSUInteger fieldIndex = 0;
 
-    for (FORMField *aField in section.fields) {
+    for (FORMFields *aField in section.fields) {
         if ([aField.position integerValue] >= [self.position integerValue]) {
             index = fieldIndex;
             found = YES;

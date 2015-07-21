@@ -38,7 +38,7 @@
     self.button.enabled = disabled ? NO : YES;
 }
 
-- (void)updateWithField:(FORMField *)field {
+- (void)updateWithField:(FORMFields *)field {
     [super updateWithField:field];
 
     self.button.enabled = !field.disabled;

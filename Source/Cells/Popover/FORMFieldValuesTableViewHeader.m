@@ -71,7 +71,7 @@
 
 #pragma mark - Setters
 
-- (void)setField:(FORMField *)field {
+- (void)setField:(FORMFields *)field {
     _field = field;
 
     self.titleLabel.text = field.title;

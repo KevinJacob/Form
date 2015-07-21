@@ -1,7 +1,7 @@
 #import "FORMGroup.h"
 
 #import "FORMSection.h"
-#import "FORMField.h"
+#import "FORMFields.h"
 #import "FORMFieldValue.h"
 #import "FORMTarget.h"
 #import "FORMClassFactory.h"
@@ -105,7 +105,7 @@
 
     for (FORMSection *section in self.sections) {
         [fields addObject:[NSString stringWithFormat:@"--- Section: %@ ---", section.sectionID]];
-        for (FORMField *field in section.fields) {
+        for (FORMFields *field in section.fields) {
             [fields addObject:[NSString stringWithFormat:@"%@ --- %@ (section %@ : field %@)\n", field.fieldID, field.value, field.section.position, field.position]];
         }
         [fields addObject:@" "];

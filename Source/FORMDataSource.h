@@ -3,7 +3,7 @@
 
 #import "FORMBaseFieldCell.h"
 #import "FORMData.h"
-#import "FORMField.h"
+#import "FORMFields.h"
 #import "FORMFieldValue.h"
 #import "FORMGroup.h"
 #import "FORMGroupHeaderView.h"
@@ -13,7 +13,7 @@
 
 typedef void (^FORMConfigureCellBlock)(id cell,
                                        NSIndexPath *indexPath,
-                                       FORMField *field);
+                                       FORMFields *field);
 
 typedef void (^FORMConfigureHeaderViewBlock)(FORMGroupHeaderView *headerView,
                                              NSString *kind,
@@ -24,12 +24,12 @@ typedef UICollectionReusableView * (^FORMConfigureGroupHeaderForItemAtIndexPathB
                                                                                       UICollectionView *collectionView,
                                                                                       NSIndexPath *indexPath);
 
-typedef UICollectionViewCell * (^FORMConfigureCellForItemAtIndexPathBlock)(FORMField *field,
+typedef UICollectionViewCell * (^FORMConfigureCellForItemAtIndexPathBlock)(FORMFields *field,
                                                                            UICollectionView *collectionView,
                                                                            NSIndexPath *indexPath);
 
 typedef void (^FORMFieldFieldUpdatedBlock)(id cell,
-                                           FORMField *field);
+                                           FORMFields *field);
 
 @interface FORMDataSource : NSObject <UICollectionViewDataSource, FORMLayoutDataSource>
 
@@ -174,7 +174,7 @@ typedef void (^FORMFieldFieldUpdatedBlock)(id cell,
  * @param includingHiddenFields A flag for whether look for hidden or collapsed fields or not
  * @return The found @ FORMField, will return @c nil if the field is not found
  */
-- (FORMField *)fieldWithID:(NSString *)fieldID
+- (FORMFields *)fieldWithID:(NSString *)fieldID
      includingHiddenFields:(BOOL)includingHiddenFields;
 
 /*!
@@ -182,7 +182,7 @@ typedef void (^FORMFieldFieldUpdatedBlock)(id cell,
  * @throw It will throw an exception if the indexPath is out of bounds
  * @return The found @ FORMField at the specific @c indexPath
  */
-- (FORMField *)fieldAtIndexPath:(NSIndexPath *)indexPath;
+- (FORMFields *)fieldAtIndexPath:(NSIndexPath *)indexPath;
 
 /*!
  * @discussion A method to find a @c field with its specific @c indexPath
@@ -191,7 +191,7 @@ typedef void (^FORMFieldFieldUpdatedBlock)(id cell,
  */
 - (void)fieldWithID:(NSString *)fieldID
 includingHiddenFields:(BOOL)includingHiddenFields
-         completion:(void (^)(FORMField *field,
+         completion:(void (^)(FORMFields *field,
                               NSIndexPath *indexPath))completion;
 
 /*!

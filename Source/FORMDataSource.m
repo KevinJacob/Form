@@ -7,6 +7,9 @@
 #import "FORMSelectFieldCell.h"
 #import "FORMDateFieldCell.h"
 #import "FORMButtonFieldCell.h"
+#import "FORMSignatureFieldCell.h"
+#import "FORMCheckboxFieldCell.h"
+#import "FORMLabelFieldCell.h"
 #import "FORMFieldValue.h"
 #import "HYPParsedRelationship.h"
 
@@ -83,6 +86,15 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
 
     [collectionView registerClass:[FORMButtonFieldCell class]
        forCellWithReuseIdentifier:FORMButtonFieldCellIdentifier];
+    
+    [collectionView registerClass:[FORMSignatureFieldCell class]
+       forCellWithReuseIdentifier:FORMSignatureFieldCellIdentifier];
+    
+    [collectionView registerClass:[FORMCheckboxFieldCell class]
+       forCellWithReuseIdentifier:FORMCheckboxFieldCellIdentifier];
+    
+    [collectionView registerClass:[FORMLabelFieldCell class]
+       forCellWithReuseIdentifier:FORMLabelFieldCellIdentifier];
 
     [collectionView registerClass:[FORMGroupHeaderView class]
        forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
@@ -134,7 +146,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
                   cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     FORMGroup *group = self.formData.groups[indexPath.section];
     NSArray *fields = group.fields;
-    FORMField *field = fields[indexPath.row];
+    FORMFields *field = fields[indexPath.row];
 
     if (self.configureCellForItemAtIndexPathBlock) {
         id configuredCell = self.configureCellForItemAtIndexPathBlock(field, collectionView, indexPath);
@@ -157,7 +169,20 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             identifier = FORMSelectFormFieldCellIdentifier;
             break;
 
+        case FORMFieldTypeSignature:
+            identifier = FORMSignatureFieldCellIdentifier;
+            break;
+            
+        case FORMFieldTypeCheckbox:
+            identifier = FORMCheckboxFieldCellIdentifier;
+            break;
+            
+        case FORMFieldTypeLabel:
+            identifier = FORMLabelFieldCellIdentifier;
+            break;
+        
         case FORMFieldTypeText:
+        case FORMFieldTypeMultilineText:
         case FORMFieldTypeFloat:
         case FORMFieldTypeNumber:
         case FORMFieldTypeCount:
@@ -274,7 +299,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     CGFloat width = 0.0f;
     CGFloat height = 0.0f;
 
-    FORMField *field;
+    FORMFields *field;
     if (indexPath.row < fields.count) {
         field = fields[indexPath.row];
     }
@@ -284,21 +309,16 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         height = FORMFieldCellItemSmallHeight;
     } else if (field) {
         width = floor(deviceWidth * (field.size.width / 100.0f));
-
-        if (field.type == FORMFieldTypeCustom) {
-            height = field.size.height * FORMFieldCellItemHeight;
-        } else {
-            height = FORMFieldCellItemHeight;
-        }
+        height = field.size.height * FORMFieldCellItemHeight;
     }
 
     return CGSizeMake(width, height);
 }
 
-- (FORMField *)fieldAtIndexPath:(NSIndexPath *)indexPath {
+- (FORMFields *)fieldAtIndexPath:(NSIndexPath *)indexPath {
     FORMGroup *group = self.formData.groups[indexPath.section];
     NSArray *fields = group.fields;
-    FORMField *field = fields[indexPath.row];
+    FORMFields *field = fields[indexPath.row];
 
     return field;
 }
@@ -325,7 +345,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     NSMutableDictionary *fields = [NSMutableDictionary new];
 
     for (FORMGroup *group in self.formData.groups) {
-        for (FORMField *field in group.fields) {
+        for (FORMFields *field in group.fields) {
             if (field.fieldID) {
                 [fields addEntriesFromDictionary:@{field.fieldID : field}];
             }
@@ -335,7 +355,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [fields addEntriesFromDictionary:self.formData.hiddenFieldsAndFieldIDsDictionary];
 
     for (FORMSection *section in [self.formData.hiddenSections allValues]) {
-        for (FORMField *field in section.fields) {
+        for (FORMFields *field in section.fields) {
             if (field.fieldID) {
                 [fields addEntriesFromDictionary:@{field.fieldID : field}];
             }
@@ -343,7 +363,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     }
 
     for (NSString *fieldID in fields) {
-        FORMField *field = [fields valueForKey:fieldID];
+        FORMFields *field = [fields valueForKey:fieldID];
         BOOL shouldChangeState = (![self.formData.disabledFieldsIDs containsObject:fieldID]);
 
         if (disabled) {
@@ -403,7 +423,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
         [self.formData fieldWithID:key
              includingHiddenFields:YES
-                        completion:^(FORMField *field, NSIndexPath *indexPath) {
+                        completion:^(FORMFields *field, NSIndexPath *indexPath) {
                             BOOL shouldBeNil = ([value isEqual:[NSNull null]]);
 
                             if (field) {
@@ -470,7 +490,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
         [self.formData fieldWithID:key
              includingHiddenFields:YES
-                        completion:^(FORMField *field, NSIndexPath *indexPath) {
+                        completion:^(FORMFields *field, NSIndexPath *indexPath) {
                             BOOL shouldBeNil = ([value isEqual:[NSNull null]]);
 
                             if (field) {
@@ -491,10 +511,10 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [self processTargets:targets];
 }
 
-- (FORMField *)fieldInDeletedFields:(NSString *)fieldID {
-    __block FORMField *foundField = nil;
+- (FORMFields *)fieldInDeletedFields:(NSString *)fieldID {
+    __block FORMFields *foundField = nil;
 
-    [self.formData.hiddenFieldsAndFieldIDsDictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, FORMField *field, BOOL *stop) {
+    [self.formData.hiddenFieldsAndFieldIDsDictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, FORMFields *field, BOOL *stop) {
         if ([field.fieldID isEqualToString:fieldID]) {
             foundField = field;
             *stop = YES;
@@ -504,11 +524,11 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     return foundField;
 }
 
-- (FORMField *)fieldInDeletedSections:(NSString *)fieldID {
-    __block FORMField *foundField = nil;
+- (FORMFields *)fieldInDeletedSections:(NSString *)fieldID {
+    __block FORMFields *foundField = nil;
 
     [self.formData.hiddenSections enumerateKeysAndObjectsUsingBlock:^(NSString *key, FORMSection *section, BOOL *stop) {
-        [section.fields enumerateObjectsUsingBlock:^(FORMField *field, NSUInteger idx, BOOL *stop) {
+        [section.fields enumerateObjectsUsingBlock:^(FORMFields *field, NSUInteger idx, BOOL *stop) {
             if ([field.fieldID isEqualToString:fieldID]) {
                 foundField = field;
                 *stop = YES;
@@ -536,7 +556,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
 #pragma mark - FORMBaseFieldCellDelegate
 
 - (void)fieldCell:(UICollectionViewCell *)fieldCell
- updatedWithField:(FORMField *)field {
+ updatedWithField:(FORMFields *)field {
     if (self.fieldUpdatedBlock) {
         self.fieldUpdatedBlock(fieldCell, field);
     }
@@ -782,7 +802,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
 - (BOOL)isValid {
     BOOL formIsValid = YES;
     for (FORMGroup *group in self.formData.groups) {
-        for (FORMField *field in group.fields) {
+        for (FORMFields *field in group.fields) {
             FORMValidationResultType fieldValidation = [field validate];
             BOOL requiredFieldFailedValidation = (fieldValidation != FORMValidationResultTypeValid);
             if (requiredFieldFailedValidation) {
@@ -796,7 +816,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
 
 - (void)reset {
     for (FORMGroup *group in self.formData.groups) {
-        for (FORMField *field in group.fields) {
+        for (FORMFields *field in group.fields) {
             field.value = nil;
         }
     }
@@ -825,7 +845,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     }
 
     for (FORMGroup *group in self.formData.groups) {
-        for (FORMField *field in group.fields) {
+        for (FORMFields *field in group.fields) {
             if (![validatedFields containsObject:field.fieldID]) {
                 [field validate];
             }
@@ -841,7 +861,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     return [self.formData requiredFormFields];
 }
 
-- (NSMutableDictionary *)valuesForFormula:(FORMField *)field {
+- (NSMutableDictionary *)valuesForFormula:(FORMFields *)field {
     return [self.formData valuesForFormula:field];
 }
 
@@ -867,7 +887,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
                             completion:completion];
 }
 
-- (FORMField *)fieldWithID:(NSString *)fieldID
+- (FORMFields *)fieldWithID:(NSString *)fieldID
      includingHiddenFields:(BOOL)includingHiddenFields {
     return [self.formData fieldWithID:fieldID
                 includingHiddenFields:includingHiddenFields];
@@ -875,7 +895,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
 
 - (void)fieldWithID:(NSString *)fieldID
 includingHiddenFields:(BOOL)includingHiddenFields
-         completion:(void (^)(FORMField *field, NSIndexPath *indexPath))completion {
+         completion:(void (^)(FORMFields *field, NSIndexPath *indexPath))completion {
     [self.formData fieldWithID:fieldID
          includingHiddenFields:includingHiddenFields
                     completion:completion];
