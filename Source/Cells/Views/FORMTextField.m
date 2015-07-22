@@ -65,7 +65,7 @@ static BOOL enabledProperty;
     UITraitCollection *trait = [UITraitCollection traitCollectionWithDisplayScale:2.0];
 
     UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [clearButton setImage:[UIImage imageNamed:@"clear"
+    [clearButton setImage:[UIImage imageNamed:@"forms_clear"
                                      inBundle:bundle
                 compatibleWithTraitCollection:trait] forState:UIControlStateNormal];
     [clearButton addTarget:self action:@selector(clearButtonAction) forControlEvents:UIControlEventTouchUpInside];
@@ -371,14 +371,14 @@ static BOOL enabledProperty;
     UITraitCollection *trait = [UITraitCollection traitCollectionWithDisplayScale:2.0];
 
     UIButton *minusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [minusButton setImage:[UIImage imageNamed:@"minus"
+    [minusButton setImage:[UIImage imageNamed:@"forms_minus"
                                      inBundle:bundle
                 compatibleWithTraitCollection:trait] forState:UIControlStateNormal];
     [minusButton addTarget:self action:@selector(minusButtonAction) forControlEvents:UIControlEventTouchUpInside];
     minusButton.frame = CGRectMake(0.0f, 0.0f, FORMTextFieldMinusButtonWidth, FORMTextFieldMinusButtonHeight);
   
     UIButton *plusButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [plusButton setImage:[UIImage imageNamed:@"plus"
+    [plusButton setImage:[UIImage imageNamed:@"forms_plus"
                                      inBundle:bundle
                 compatibleWithTraitCollection:trait] forState:UIControlStateNormal];
     [plusButton addTarget:self action:@selector(plusButtonAction) forControlEvents:UIControlEventTouchUpInside];

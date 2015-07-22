@@ -138,12 +138,12 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
     switch (self.field.type) {
         case FORMFieldTypeDate:
         case FORMFieldTypeDateTime:
-            return [UIImage imageNamed:@"calendar"
+            return [UIImage imageNamed:@"forms_calendar"
                                   inBundle:bundle
              compatibleWithTraitCollection:trait];
             break;
         case FORMFieldTypeTime:
-            return [UIImage imageNamed:@"clock"
+            return [UIImage imageNamed:@"forms_clock"
                               inBundle:bundle
          compatibleWithTraitCollection:trait];
             break;

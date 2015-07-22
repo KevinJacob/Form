@@ -1,6 +1,7 @@
 @import UIKit;
 
 #import "FORMTextField.h"
+#import "FORMTextView.h"
 
 #import "FORMFields.h"
 
@@ -39,5 +40,6 @@ static const CGFloat FORMFieldCellLeftMargin = 10.0f;
 
 - (void)fieldCell:(UICollectionViewCell *)fieldCell updatedWithField:(FORMFields *)field;
 - (void)fieldCell:(UICollectionViewCell *)fieldCell processTargets:(NSArray *)targets;
+- (void)reloadCollectionView;
 
 @end

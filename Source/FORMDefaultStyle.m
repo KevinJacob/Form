@@ -54,16 +54,36 @@
     [[FORMTextField appearance] setActiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMTextField appearance] setInactiveBackgroundColor:[UIColor whiteColor]];
     [[FORMTextField appearance] setInactiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
-    [[FORMTextField appearance] setEnabledBackgroundColor:[UIColor whiteColor]];
+    [[FORMTextField appearance] setEnabledBackgroundColor:[UIColor colorFromHex:@"E1F5FF"]];
     [[FORMTextField appearance] setEnabledBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMTextField appearance] setEnabledTextColor:[UIColor blackColor]];
     [[FORMTextField appearance] setDisabledBackgroundColor:[UIColor colorFromHex:@"F5F5F8"]];
     [[FORMTextField appearance] setDisabledBorderColor:[UIColor colorFromHex:@"DEDEDE"]];
-    [[FORMTextField appearance] setDisabledTextColor:[UIColor grayColor]];
+    [[FORMTextField appearance] setDisabledTextColor:[UIColor blackColor]];
     [[FORMTextField appearance] setValidBackgroundColor:[UIColor whiteColor]];
     [[FORMTextField appearance] setValidBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMTextField appearance] setInvalidBackgroundColor:[UIColor colorFromHex:@"FFD7D7"]];
     [[FORMTextField appearance] setInvalidBorderColor:[UIColor colorFromHex:@"EC3031"]];
+    
+    [[FORMTextView appearance] setFont:[UIFont fontWithName:@"AvenirNext-Regular" size:15.0]];
+    [[FORMTextView appearance] setTextColor:[UIColor blackColor]];
+    [[FORMTextView appearance] setBorderWidth:1.0f];
+    [[FORMTextView appearance] setBorderColor:[UIColor colorFromHex:@"1A242F"]];
+    [[FORMTextView appearance] setCornerRadius:5.0f];
+    [[FORMTextView appearance] setActiveBackgroundColor:[UIColor colorFromHex:@"E1F5FF"]];
+    [[FORMTextView appearance] setActiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
+    [[FORMTextView appearance] setInactiveBackgroundColor:[UIColor whiteColor]];
+    [[FORMTextView appearance] setInactiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
+    [[FORMTextView appearance] setEnabledBackgroundColor:[UIColor colorFromHex:@"E1F5FF"]];
+    [[FORMTextView appearance] setEnabledBorderColor:[UIColor colorFromHex:@"1A242F"]];
+    [[FORMTextView appearance] setEnabledTextColor:[UIColor blackColor]];
+    [[FORMTextView appearance] setDisabledBackgroundColor:[UIColor colorFromHex:@"F5F5F8"]];
+    [[FORMTextView appearance] setDisabledBorderColor:[UIColor colorFromHex:@"DEDEDE"]];
+    [[FORMTextView appearance] setDisabledTextColor:[UIColor blackColor]];
+    [[FORMTextView appearance] setValidBackgroundColor:[UIColor whiteColor]];
+    [[FORMTextView appearance] setValidBorderColor:[UIColor colorFromHex:@"1A242F"]];
+    [[FORMTextView appearance] setInvalidBackgroundColor:[UIColor colorFromHex:@"FFD7D7"]];
+    [[FORMTextView appearance] setInvalidBorderColor:[UIColor colorFromHex:@"EC3031"]];
 
     [[FORMFieldValueLabel appearance] setCustomFont:[UIFont fontWithName:@"AvenirNext-Regular" size:15.0]];
     [[FORMFieldValueLabel appearance] setTextColor:[UIColor blackColor]];

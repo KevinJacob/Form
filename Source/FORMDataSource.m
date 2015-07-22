@@ -4,6 +4,7 @@
 #import "FORMLayout.h"
 
 #import "FORMTextFieldCell.h"
+#import "FORMTextViewCell.h"
 #import "FORMSelectFieldCell.h"
 #import "FORMDateFieldCell.h"
 #import "FORMButtonFieldCell.h"
@@ -78,9 +79,6 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [collectionView registerClass:[FORMTextFieldCell class]
        forCellWithReuseIdentifier:FORMTextFieldCellIdentifier];
 
-    [collectionView registerClass:[FORMTextFieldCell class]
-       forCellWithReuseIdentifier:FORMCountFieldCellIdentifier];
-
     [collectionView registerClass:[FORMSelectFieldCell class]
        forCellWithReuseIdentifier:FORMSelectFormFieldCellIdentifier];
 
@@ -95,6 +93,9 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     
     [collectionView registerClass:[FORMCheckboxFieldCell class]
        forCellWithReuseIdentifier:FORMCheckboxFieldCellIdentifier];
+    
+    [collectionView registerClass:[FORMTextViewCell class]
+       forCellWithReuseIdentifier:FORMTextViewCellIdentifier];
     
     [collectionView registerClass:[FORMLabelFieldCell class]
        forCellWithReuseIdentifier:FORMLabelFieldCellIdentifier];
@@ -161,44 +162,44 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     NSString *identifier;
 
     switch (field.type) {
-
+        
         case FORMFieldTypeDate:
         case FORMFieldTypeDateTime:
         case FORMFieldTypeTime:
             identifier = FORMDateFormFieldCellIdentifier;
             break;
-
+        
         case FORMFieldTypeSelect:
             identifier = FORMSelectFormFieldCellIdentifier;
             break;
-
+        
         case FORMFieldTypeSignature:
             identifier = FORMSignatureFieldCellIdentifier;
             break;
-            
+        
         case FORMFieldTypeCheckbox:
             identifier = FORMCheckboxFieldCellIdentifier;
             break;
-            
+        
         case FORMFieldTypeLabel:
             identifier = FORMLabelFieldCellIdentifier;
             break;
         
-        case FORMFieldTypeText:
         case FORMFieldTypeMultilineText:
+            identifier = FORMTextViewCellIdentifier;
+            break;
+        
+        case FORMFieldTypeText:
         case FORMFieldTypeFloat:
         case FORMFieldTypeNumber:
+        case FORMFieldTypeCount:
             identifier = FORMTextFieldCellIdentifier;
             break;
-
-        case FORMFieldTypeCount:
-            identifier = FORMCountFieldCellIdentifier;
-            break;
-
+        
         case FORMFieldTypeButton:
             identifier = FORMButtonFieldCellIdentifier;
             break;
-
+        
         case FORMFieldTypeCustom: abort();
     }
 
@@ -309,13 +310,27 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     if (indexPath.row < fields.count) {
         field = fields[indexPath.row];
     }
-
+    
     if (field.sectionSeparator) {
         width = deviceWidth;
         height = FORMFieldCellItemSmallHeight;
     } else if (field) {
         width = floor(deviceWidth * (field.size.width / 100.0f));
-        height = field.size.height * FORMFieldCellItemHeight;
+        if(field.type == FORMFieldTypeMultilineText)
+        {
+            if(field.value)
+            {
+                height = field.size.height;
+            }
+            else
+            {
+                height = FORMFieldCellItemHeight;
+            }
+        }
+        else
+        {
+            height = field.size.height * FORMFieldCellItemHeight;
+        }
     }
 
     return CGSizeMake(width, height);
@@ -420,23 +435,6 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     return !_disabled;
 }
 
-- (void)collapseAllGroupsForCollectionView:(UICollectionView *)collectionView {
-    NSMutableArray *indexPaths = [NSMutableArray new];
-
-    [self.formData.groups enumerateObjectsUsingBlock:^(FORMGroup *formGroup, NSUInteger idx, BOOL *stop) {
-        if (![self.collapsedGroups containsObject:@(idx)]) {
-            for (NSInteger i = 0; i < formGroup.fields.count; i++) {
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:idx];
-                [indexPaths addObject:indexPath];
-            }
-            [self.collapsedGroups addObject:@(idx)];
-        }
-    }];
-
-    [collectionView deleteItemsAtIndexPaths:indexPaths];
-    [collectionView.collectionViewLayout invalidateLayout];
-}
-
 - (void)reloadWithDictionary:(NSDictionary *)dictionary {
     [self.formData.values setValuesForKeysWithDictionary:dictionary];
 
@@ -450,23 +448,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
                             BOOL shouldBeNil = ([value isEqual:[NSNull null]]);
 
                             if (field) {
-
-                                if (field.values.count) {
-                                    if (shouldBeNil) {
-                                        field.value = nil;
-                                    } else {
-                                        for (FORMFieldValue *fieldValue in field.values) {
-                                            if ([value isEqual:fieldValue.valueID]) {
-                                                field.value = fieldValue;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                } else {
-                                    field.value = (shouldBeNil) ? nil : value;
-                                }
-
+                                field.value = (shouldBeNil) ? nil : value;
                                 if (indexPath) {
                                     [updatedIndexPaths addObject:indexPath];
                                 }
@@ -652,6 +634,12 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
                withObject:targets
                afterDelay:delay];
 }
+
+-(void)reloadCollectionView
+{
+    [self.collectionView.collectionViewLayout invalidateLayout];
+}
+
 
 #pragma mark - Targets Procesing
 

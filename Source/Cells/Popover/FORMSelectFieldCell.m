@@ -22,7 +22,7 @@ static const NSInteger FORMSelectMaxItemCount = 6;
     NSBundle *bundle = [NSBundle bundleWithPath: bundlePath];
 
     UITraitCollection *trait = [UITraitCollection traitCollectionWithDisplayScale:2.0];
-    self.iconImageView.image = [UIImage imageNamed:@"arrow_down"
+    self.iconImageView.image = [UIImage imageNamed:@"forms_arrow_down"
                                           inBundle:bundle
                      compatibleWithTraitCollection:trait];
     return self;
