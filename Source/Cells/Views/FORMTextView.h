@@ -65,6 +65,10 @@ typedef NS_ENUM(NSInteger, FORMTextViewInputType)
 @property (nonatomic, weak) id <FORMTextViewDelegate>      textViewDelegate;
 
 
+- (void)setActive:(BOOL)active;
+- (void)setEnabled:(BOOL)enabled;
+- (void)setValid:(BOOL)valid;
+
 - (void)setCustomFont:(UIFont *)font  UI_APPEARANCE_SELECTOR;
 - (void)setBorderWidth:(CGFloat)borderWidth UI_APPEARANCE_SELECTOR;
 - (void)setBorderColor:(UIColor *)borderColor UI_APPEARANCE_SELECTOR;

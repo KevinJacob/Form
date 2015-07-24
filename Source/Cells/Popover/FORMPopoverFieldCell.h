@@ -1,10 +1,10 @@
 #import "FORMBaseFieldCell.h"
-#import "FORMFieldValueLabel.h"
+#import "FORMDropDownValueView.h"
 #import "FORMFieldValuesTableViewController.h"
 
 @interface FORMPopoverFieldCell : FORMBaseFieldCell
 
-@property (nonatomic) FORMFieldValueLabel *fieldValueLabel;
+@property (nonatomic) FORMDropDownValueView *valueView;
 @property (nonatomic) UIPopoverController *popoverController;
 @property (nonatomic) UIImageView *iconImageView;
 

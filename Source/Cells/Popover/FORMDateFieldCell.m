@@ -89,11 +89,11 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
     field.values = @[confirmValue, clearValue];
 
     if (field.value) {
-        self.fieldValueLabel.text = [NSDateFormatter localizedStringFromDate:field.value
+        self.valueView.text = [NSDateFormatter localizedStringFromDate:field.value
                                                                    dateStyle:[self dateStyleForField:field]
                                                                    timeStyle:[self timeStyleForField:field]];
     } else {
-        self.fieldValueLabel.text = nil;
+        self.valueView.text = nil;
     }
 
     self.iconImageView.image = [self fieldIcon];

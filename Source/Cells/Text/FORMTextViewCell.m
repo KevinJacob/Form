@@ -54,12 +54,13 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     if (!self) return nil;
     
     self.textView = [[FORMTextView alloc] initWithFrame:[self textViewFrame]];
-    self.textView.textInputView.frame = CGRectMake(5, 5, self.textView.frame.size.width - 10, self.textView.frame.size.height - 10);
+    self.textView.textContainerInset = UIEdgeInsetsMake(12, 5, 10, 25);
     self.textView.textViewDelegate = self;
     self.textView.scrollEnabled = NO;
     self.textView.showsVerticalScrollIndicator   = NO;
     self.textView.showsHorizontalScrollIndicator = NO;
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.textView.contentInset = UIEdgeInsetsZero;
     
     [self.contentView addSubview:self.textView];
     
@@ -230,7 +231,7 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     [super layoutSubviews];
 
     self.textView.frame = [self textViewFrame];
-    self.textView.textInputView.frame = CGRectMake(5, 5, self.textView.frame.size.width - 10, self.textView.frame.size.height - 10);
+    self.textView.textContainerInset = UIEdgeInsetsMake(12, 5, 10, 25);
 }
 
 
@@ -352,14 +353,14 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 {
     self.field.value = nil;
     
+    CGFloat initalHeight = self.textView.frame.size.height;
     self.textView.frame = [self textViewFrame];
-    self.textView.textInputView.frame = CGRectMake(5, 5, self.textView.frame.size.width - 10, self.textView.frame.size.height - 10);
-    CGFloat initalHeight = self.formField.size.height;
-    self.formField.size = CGSizeMake( self.formField.size.width , self.textView.frame.size.height + FORMFieldCellMarginTop + FORMFieldCellMarginBottom);
-    CGFloat newHeight = self.formField.size.height;
+    self.textView.textContainerInset = UIEdgeInsetsMake(12, 5, 10, 25);
+    CGFloat newHeight = self.textView.frame.size.height;
     
-    if(initalHeight != newHeight)
+    if(initalHeight != newHeight && initalHeight != 1)
     {
+        self.formField.size = CGSizeMake( self.formField.size.width , self.textView.frame.size.height + FORMFieldCellMarginTop + FORMFieldCellMarginBottom);
         [self.delegate reloadCollectionView];
     }
     
@@ -400,20 +401,21 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 {
     self.field.value = text;
     [self validate];
-    
+
     if (!self.textView.valid)
     {
         [self.textView setValid:[self.field validate]];
     }
     
+    CGFloat initalHeight = self.textView.frame.size.height;
     self.textView.frame = [self textViewFrame];
-    self.textView.textInputView.frame = CGRectMake(5, 5, self.textView.frame.size.width - 10, self.textView.frame.size.height - 10);
-    CGFloat initalHeight = self.formField.size.height;
-    self.formField.size = CGSizeMake( self.formField.size.width , self.textView.frame.size.height + FORMFieldCellMarginTop + FORMFieldCellMarginBottom);
-    CGFloat newHeight = self.formField.size.height;
+    [self sizeToFit];
+    self.textView.textContainerInset = UIEdgeInsetsMake(12, 5, 10, 25);
+    CGFloat newHeight = self.textView.frame.size.height;
     
     if(initalHeight != newHeight && initalHeight != 1)
     {
+        self.formField.size = CGSizeMake( self.formField.size.width , self.textView.frame.size.height + FORMFieldCellMarginTop + FORMFieldCellMarginBottom);
         [self.delegate reloadCollectionView];
     }
     

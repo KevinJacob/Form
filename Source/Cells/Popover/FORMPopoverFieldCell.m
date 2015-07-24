@@ -4,7 +4,7 @@
 static const CGFloat FORMIconButtonWidth = 32.0f;
 static const CGFloat FORMIconButtonHeight = 38.0f;
 
-@interface FORMPopoverFieldCell () <FORMTitleLabelDelegate, UIPopoverControllerDelegate>
+@interface FORMPopoverFieldCell () <FORMDropDownValueDelegate, UIPopoverControllerDelegate>
 
 @property (nonatomic) UIViewController *contentViewController;
 @property (nonatomic) CGSize contentSize;
@@ -23,7 +23,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
     _contentViewController = contentViewController;
     _contentSize = contentSize;
 
-    [self.contentView addSubview:self.fieldValueLabel];
+    [self.contentView addSubview:self.valueView];
     [self.contentView addSubview:self.iconImageView];
 
     return self;
@@ -31,13 +31,13 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
 #pragma mark - Getters
 
-- (FORMFieldValueLabel *)fieldValueLabel {
-    if (_fieldValueLabel) return _fieldValueLabel;
+- (FORMDropDownValueView *)valueView {
+    if (_valueView) return _valueView;
 
-    _fieldValueLabel = [[FORMFieldValueLabel alloc] initWithFrame:[self fieldValueLabelFrame]];
-    _fieldValueLabel.delegate = self;
+    _valueView = [[FORMDropDownValueView alloc] initWithFrame:[self fieldValueViewFrame]];
+    _valueView.valueDelegate = self;
 
-    return _fieldValueLabel;
+    return _valueView;
 }
 
 - (UIPopoverController *)popoverController {
@@ -64,7 +64,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 #pragma mark - Private methods
 
 - (BOOL)becomeFirstResponder {
-    [self titleLabelPressed:self.fieldValueLabel];
+    [self titleLabelPressed:self.valueView];
 
     return [super becomeFirstResponder];
 }
@@ -73,7 +73,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
 - (void)validate {
     BOOL validation = ([self.field validate] == FORMValidationResultTypeValid);
-    [self.fieldValueLabel setValid:validation];
+    [self.valueView setValid:validation];
 }
 
 #pragma mark - FORMPopoverFormFieldCell
@@ -85,7 +85,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 #pragma mark - FORMBaseFormFieldCell
 
 - (void)updateFieldWithDisabled:(BOOL)disabled {
-    self.fieldValueLabel.enabled = !disabled;
+    [self.valueView setEnabled:!disabled];
 }
 
 - (void)updateWithField:(FORMFields *)field {
@@ -93,10 +93,10 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
     self.iconImageView.hidden = field.disabled;
 
-    self.fieldValueLabel.hidden = (field.sectionSeparator);
-    self.fieldValueLabel.enabled = !field.disabled;
-    self.fieldValueLabel.userInteractionEnabled = !field.disabled;
-    self.fieldValueLabel.valid = field.valid;
+    self.valueView.hidden = (field.sectionSeparator);
+    self.valueView.enabled = !field.disabled;
+    self.valueView.userInteractionEnabled = !field.disabled;
+    self.valueView.valid = field.valid;
 }
 
 #pragma mark - Layout
@@ -104,11 +104,11 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    self.fieldValueLabel.frame = [self fieldValueLabelFrame];
+    self.valueView.frame = [self fieldValueViewFrame];
     self.iconImageView.frame = [self iconImageViewFrame];
 }
 
-- (CGRect)fieldValueLabelFrame {
+- (CGRect)fieldValueViewFrame {
     CGFloat marginX = FORMTextFieldCellMarginX;
     CGFloat marginTop = FORMFieldCellMarginTop;
     CGFloat marginBotton = FORMFieldCellMarginBottom;
@@ -132,7 +132,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
 #pragma mark - FORMTitleLabelDelegate
 
-- (void)titleLabelPressed:(FORMFieldValueLabel *)titleLabel {
+- (void)titleLabelPressed:(FORMDropDownValueView *)titleLabel {
     [[NSNotificationCenter defaultCenter] postNotificationName:FORMResignFirstResponderNotification object:nil];
 
     [self updateContentViewController:self.contentViewController withField:self.field];

@@ -5,6 +5,10 @@
 #import "FORMFieldValuesTableViewHeader.h"
 #import "FORMFieldValueCell.h"
 
+
+static const CGFloat FORMFieldValueMargin = 10.0f;
+
+
 @interface FORMFieldValuesTableViewController ()
 
 @property (nonatomic) NSArray *values;
@@ -116,6 +120,40 @@
         [self.delegate fieldValuesTableViewController:self
                                      didSelectedValue:fieldValue];
     }
+}
+
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    FORMFieldValue *fieldValue = self.values[indexPath.row];
+    
+    return ([self getHeightForTextView:fieldValue.title withWidth:self.tableView.frame.size.width] + (FORMFieldValueMargin * 2));
+    
+}
+
+
+#pragma mark - Getters
+
+- (CGFloat)getHeightForTextView:(NSString *)myTextView withWidth:(CGFloat)width
+{
+    NSString *textToMeasure;
+    
+    if(myTextView.length > 0)
+    {
+        textToMeasure = myTextView;
+    }
+    else
+    {
+        textToMeasure = @" ";
+    }
+    
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-Medium" size:17.0]}];
+    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(width*0.95, CGFLOAT_MAX)
+                                               options:NSStringDrawingUsesLineFragmentOrigin
+                                               context:nil];
+    CGFloat textViewHeight = rect.size.height;
+    
+    return textViewHeight;
 }
 
 @end

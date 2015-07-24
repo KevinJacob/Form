@@ -14,4 +14,8 @@ static NSString * const FORMTextViewCellIdentifier = @"FORMTextViewCellIdentifie
 
 @interface FORMTextViewCell : FORMBaseFieldCell <UITextViewDelegate>
 
+- (void)setTooltipLabelFont:(UIFont *)tooltipLabelFont UI_APPEARANCE_SELECTOR;
+- (void)setTooltipLabelTextColor:(UIColor *)tooltipLabelTextColor UI_APPEARANCE_SELECTOR;
+- (void)setTooltipBackgroundColor:(UIColor *)tooltipBackgroundColor UI_APPEARANCE_SELECTOR;
+
 @end

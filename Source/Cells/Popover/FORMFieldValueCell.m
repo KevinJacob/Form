@@ -11,7 +11,10 @@
     if (!self) return nil;
 
     self.textLabel.textAlignment = NSTextAlignmentLeft;
-
+    self.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.textLabel.numberOfLines = 0;
+    
+    
     self.detailTextLabel.textAlignment = NSTextAlignmentLeft;
 
     self.selectionStyle = UITableViewCellSelectionStyleGray;

@@ -8,6 +8,7 @@
 #import "FORMGroupHeaderView.h"
 #import "FORMFieldValuesTableViewHeader.h"
 #import "FORMTextFieldCell.h"
+#import "FORMTextViewCell.h"
 #import "FORMButtonFieldCell.h"
 #import "FORMBaseFieldCell.h"
 
@@ -117,6 +118,10 @@
     [[FORMTextFieldCell appearance] setTooltipLabelFont:[UIFont fontWithName:@"AvenirNext-Medium" size:14.0]];
     [[FORMTextFieldCell appearance] setTooltipLabelTextColor:[UIColor blackColor]];
     [[FORMTextFieldCell appearance] setTooltipBackgroundColor:[UIColor colorFromHex:@"E5F4F5"]];
+    
+    [[FORMTextViewCell appearance] setTooltipLabelFont:[UIFont fontWithName:@"AvenirNext-Medium" size:14.0]];
+    [[FORMTextViewCell appearance] setTooltipLabelTextColor:[UIColor blackColor]];
+    [[FORMTextViewCell appearance] setTooltipBackgroundColor:[UIColor colorFromHex:@"E5F4F5"]];
 }
 
 @end
