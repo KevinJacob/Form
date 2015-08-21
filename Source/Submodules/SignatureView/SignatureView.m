@@ -14,8 +14,6 @@
 @property (nonatomic, assign) CGPoint previousPoint;
 @property (nonatomic, strong) UIImage *tempImage;
 
-@property (nonatomic, assign) BOOL blank;
-
 @property (nonatomic, strong) UIBarButtonItem *doneButton;
 
 @end
@@ -193,7 +191,7 @@
                         toPoint:(CGPoint)toPoint image:(UIImage *)image {
     
     CGSize screenSize = self.frame.size;
-    if (UIGraphicsBeginImageContextWithOptions != NULL) {
+    if (&UIGraphicsBeginImageContextWithOptions != NULL) {
         UIGraphicsBeginImageContextWithOptions(screenSize, NO, 0.0);
     } else {
         UIGraphicsBeginImageContext(screenSize);
@@ -222,7 +220,7 @@
     
     CGSize screenSize = self.frame.size;
     
-    if (UIGraphicsBeginImageContextWithOptions != NULL) {
+    if (&UIGraphicsBeginImageContextWithOptions != NULL) {
         UIGraphicsBeginImageContextWithOptions(screenSize, NO, 0.0);
     } else {
         UIGraphicsBeginImageContext(screenSize);

@@ -25,24 +25,34 @@ static const CGFloat FORMCheckboxFieldMargin = 10.0f;
     self = [super initWithFrame:frame];
     if (!self) return nil;
     
+    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    
     UIButton *checkbox = [[UIButton alloc]initWithFrame:CGRectMake (FORMCheckboxFieldMargin,
-                                                                    FORMCheckboxFieldTopMargin,
-                                                                    self.frame.size.height - FORMCheckboxFieldMargin - FORMCheckboxFieldTopMargin,
-                                                                    self.frame.size.height - FORMCheckboxFieldMargin - FORMCheckboxFieldTopMargin)];
+                                                                    self.frame.size.height - 45 - FORMCheckboxFieldTopMargin,
+                                                                    45,
+                                                                    45)];
     
     [checkbox setImage:[UIImage imageNamed:@"check-no"] forState:UIControlStateNormal];
     [checkbox setImage:[UIImage imageNamed:@"check-yes"] forState:UIControlStateHighlighted];
     [checkbox setImage:[UIImage imageNamed:@"check-yes"] forState:UIControlStateSelected];
     [checkbox addTarget:self action:@selector(accessoryButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.contentView addSubview:checkbox];
-    
     self.check = checkbox;
     
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    [self.contentView addSubview:self.check];
     
     return self;
+}
+
+
+
+-(void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    self.check.frame = CGRectMake (FORMCheckboxFieldMargin,
+                                   self.frame.size.height - 45 - FORMCheckboxFieldTopMargin,
+                                   45,
+                                   45);
 }
 
 
@@ -52,13 +62,25 @@ static const CGFloat FORMCheckboxFieldMargin = 10.0f;
 
 - (void)accessoryButtonTapped
 {
+    NSString *valStr;
+    
     if(self.check.isSelected)
     {
         [self.check setSelected:NO];
+        valStr = @"";
     }
     else
     {
         [self.check setSelected:YES];
+        valStr = @"Y";
+    }
+    
+    self.field.value = valStr;
+    
+    if ([self.delegate respondsToSelector:@selector(fieldCell:updatedWithField:)])
+    {
+        [self.delegate fieldCell:self
+                updatedWithField:self.field];
     }
 }
 
@@ -82,6 +104,11 @@ static const CGFloat FORMCheckboxFieldMargin = 10.0f;
     self.hidden                                 = (field.sectionSeparator);
     self.alpha                                  = field.disabled ? 0.5f : 1.0f;
     self.check.userInteractionEnabled           = field.disabled ? NO : YES;
+    
+    if([field.value isEqualToString:@"Y"])
+    {
+        [self.check setSelected:YES];
+    }
 }
 
 

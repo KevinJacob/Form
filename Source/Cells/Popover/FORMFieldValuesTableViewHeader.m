@@ -2,6 +2,8 @@
 
 #import "FORMFieldValueCell.h"
 
+#import "UIColor+Hex.h"
+
 @interface FORMFieldValuesTableViewHeader ()
 
 @property (nonatomic) UILabel *titleLabel;
@@ -17,6 +19,11 @@
     self = [super initWithFrame:frame];
     if (!self) return nil;
 
+    self.backgroundView = ({
+        UIView * view = [[UIView alloc] initWithFrame:self.bounds];
+        view.backgroundColor = [UIColor colorFromHex:@"1A242F"];
+        view;
+    });
     [self addSubview:self.titleLabel];
     [self addSubview:self.infoLabel];
 
@@ -63,10 +70,32 @@
 {
     CGFloat height = 0.0f;
     height += self.titleLabel.frame.origin.y * 2;
-    height += self.titleLabel.frame.size.height;
+    height += [self getHeightForTextView:self.titleLabel.text withWidth:self.frame.size.width];
     height += self.infoLabel.frame.size.height;
 
     return height;
+}
+
+- (CGFloat)getHeightForTextView:(NSString *)myTextView withWidth:(CGFloat)width
+{
+    NSString *textToMeasure;
+    
+    if(myTextView.length > 0)
+    {
+        textToMeasure = myTextView;
+    }
+    else
+    {
+        textToMeasure = @" ";
+    }
+    
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-Medium" size:17.0]}];
+    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(width*0.95, CGFLOAT_MAX)
+                                               options:NSStringDrawingUsesLineFragmentOrigin
+                                               context:nil];
+    CGFloat textViewHeight = rect.size.height;
+    
+    return textViewHeight;
 }
 
 #pragma mark - Setters
@@ -77,7 +106,6 @@
     self.titleLabel.text = field.title;
     self.infoLabel.text = field.info;
 
-    [self updateLabelFrames];
 }
 
 - (void)setTitleLabelFont:(UIFont *)titleLabelFont {
@@ -98,17 +126,20 @@
 
 #pragma marks - Private methods
 
-- (void)updateLabelFrames {
+- (void)updateLabelFrames:(CGFloat)width
+{
     [self.titleLabel sizeToFit];
     CGRect titleFrame = self.titleLabel.frame;
-    titleFrame.size.width = FORMFieldValuesHeaderWidth;
+    titleFrame.size.width = width;
     self.titleLabel.frame = titleFrame;
+    //self.titleLabel.textAlignment = NSTextAlignmentCenter;
 
     [self.infoLabel sizeToFit];
     CGRect infoFrame = self.infoLabel.frame;
     infoFrame.origin.y = [self infoLabelFrame].origin.y;
-    infoFrame.size.width = FORMFieldValuesHeaderWidth;
+    infoFrame.size.width = width;
     self.infoLabel.frame = infoFrame;
+    //self.infoLabel.textAlignment = NSTextAlignmentCenter;
 }
 
 @end

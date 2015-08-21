@@ -297,7 +297,7 @@ static BOOL enabledProperty;
 }
 
 - (void)minusButtonAction {
-    NSNumber *number = [NSNumber numberWithInt:[self.rawText integerValue] - 1];
+    NSNumber *number = [NSNumber numberWithInt:([self.rawText integerValue] - 1.0)];
     if ([number integerValue] < 0) {
       self.rawText = @"0";
     } else {
@@ -311,7 +311,7 @@ static BOOL enabledProperty;
 }
 
 - (void)plusButtonAction {
-    NSNumber *number = [NSNumber numberWithInt:[self.rawText integerValue] + 1];
+    NSNumber *number = [NSNumber numberWithInt:[self.rawText integerValue] + 1.0];
     self.rawText = [number stringValue];
 
     if ([self.textFieldDelegate respondsToSelector:@selector(textFormField:didUpdateWithText:)]) {

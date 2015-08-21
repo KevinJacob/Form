@@ -25,6 +25,13 @@
     self.selectedBackgroundView = selectedBackgroundView;
     self.separatorInset = UIEdgeInsetsZero;
 
+    UIButton *clear = [UIButton buttonWithType:UIButtonTypeCustom];
+    [clear setImage:[UIImage imageNamed:@"checkmarkCircleIcon"] forState:UIControlStateNormal];
+    clear.frame = CGRectMake(self.frame.size.width - 40, 7, 30, 30);
+    clear.hidden = YES;
+    self.clearButton = clear;
+    [self.contentView addSubview:clear];
+    
     return self;
 }
 

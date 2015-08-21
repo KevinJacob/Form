@@ -23,10 +23,8 @@
     if (!self.validation) return FORMValidationResultTypeValid;
 
     if (!fieldValue) {
-        if (self.validation.isRequired) {
+        if(self.validation.isRequired) {
             return FORMValidationResultTypeInvalidValueMissing;
-        } else {
-            return FORMValidationResultTypeValid;
         }
     }
 
@@ -67,12 +65,13 @@
         }
     }
 
+    /*
     if ([fieldValue isKindOfClass:[NSString class]] && self.validation.format) {
         if (![self validateString:fieldValue withFormat:self.validation.format]) {
             return FORMValidationResultTypeInvalidFormat;
         }
     }
-
+     */
     return FORMValidationResultTypeValid;
 }
 

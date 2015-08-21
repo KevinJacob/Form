@@ -199,7 +199,7 @@
     if ([self.dataSource respondsToSelector:@selector(groups)]) {
         groups = [self.dataSource groups];
     } else {
-        abort();
+        return nil;
     }
 
     NSArray *collapsedGroups = nil;
@@ -207,7 +207,7 @@
     if ([self.dataSource respondsToSelector:@selector(collapsedGroups)]) {
         collapsedGroups = [self.dataSource collapsedGroups];
     } else {
-        abort();
+        return nil;
     }
 
     FORMGroup *group = groups[section];

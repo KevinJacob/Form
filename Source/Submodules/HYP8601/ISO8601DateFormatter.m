@@ -75,7 +75,7 @@ bool ISO8601DateFormatter_GlobalCachesAreWarm(void) {
 }
 
 + (void) purgeGlobalCaches {
-	ISO8601TimeZoneCache *oldCache = timeZoneCache;
+	//ISO8601TimeZoneCache *oldCache = timeZoneCache;
 	timeZoneCache = nil;
 	//[oldCache release];
 }

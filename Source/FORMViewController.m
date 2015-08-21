@@ -8,10 +8,8 @@
 
 @interface FORMViewController ()
 
-@property (nonatomic, copy) id JSON;
 @property (nonatomic, copy) NSDictionary *initialValues;
 @property (nonatomic) FORMDataSource *dataSource;
-@property (nonatomic) FORMLayout *layout;
 @property (nonatomic) BOOL disabled;
 
 @end
@@ -66,9 +64,8 @@
     [super viewDidLoad];
 
     self.edgesForExtendedLayout = UIRectEdgeNone;
-
-    self.collectionView.dataSource = self.dataSource;
 }
+
 
 #pragma mark - UICollectionViewDelegate
 

@@ -1,12 +1,12 @@
 #import "FORMDateFieldCell.h"
-#import "FORMFieldValue.h"
+#import "FORMTextFieldCell.h"
+#import "FORMTextViewCell.h"
+#import "NSDate+dateToText.h"
+#import "RMDateSelectionViewController.h"
 
 static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
 
-@interface FORMDateFieldCell () <FORMTextFieldDelegate,
-UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
-
-@property (nonatomic) UIDatePicker *datePicker;
+@interface FORMDateFieldCell () <FORMTextFieldDelegate>
 
 @end
 
@@ -15,14 +15,9 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
 #pragma mark - Initializers
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame contentViewController:self.fieldValuesController
+    self = [super initWithFrame:frame contentViewController:self.dateController
                  andContentSize:FORMDatePopoverSize];
     if (!self) return nil;
-
-    self.fieldValuesController.delegate = self;
-    self.fieldValuesController.customHeight = 197.0f;
-    self.fieldValuesController.tableView.scrollEnabled = NO;
-    [self.fieldValuesController.headerView addSubview:self.datePicker];
 
     return self;
 }
@@ -33,65 +28,93 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
     return CGRectMake(0.0f, 25.0f, FORMDatePopoverSize.width, 196);
 }
 
-- (UIDatePicker *)datePicker {
-    if (_datePicker) return _datePicker;
-
-    _datePicker = [[UIDatePicker alloc] initWithFrame:[self datePickerFrame]];
-    _datePicker.datePickerMode = UIDatePickerModeDate;
-    _datePicker.backgroundColor = [UIColor clearColor];
-
-    [_datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged];
-
-    return _datePicker;
-}
-
-#pragma mark - Setters
-
-- (void)setDate:(NSDate *)date {
-    _date = date;
-
-    if (_date) self.datePicker.date = _date;
-}
-
-- (void)setMinimumDate:(NSDate *)minimumDate {
-    _minimumDate = minimumDate;
-
-    self.datePicker.minimumDate = _minimumDate;
-}
-
-- (void)setMaximumDate:(NSDate *)maximumDate {
-    _maximumDate = maximumDate;
-
-    self.datePicker.maximumDate = _maximumDate;
-}
 
 #pragma mark - Actions
 
-- (void)dateChanged:(UIDatePicker *)datePicker {
-    self.date = datePicker.date;
+
+- (void)openDateSelectionController
+{
+    RMAction *selectAction = [RMAction actionWithTitle:@"Select" style:RMActionStyleDone andHandler:^(RMActionController *controller)
+    {
+        switch (self.field.type) {
+            case FORMFieldTypeDate:
+                self.field.value = [((UIDatePicker *)controller.contentView).date displayDate];
+                break;
+            case FORMFieldTypeDateTime:
+                self.field.value = [((UIDatePicker *)controller.contentView).date displayDateTime];
+                break;
+            case FORMFieldTypeTime:
+                self.field.value = [((UIDatePicker *)controller.contentView).date displayTime];
+                break;
+            default:
+                break;
+        }
+        
+        [self updateWithField:self.field];
+        [self validate];
+        
+        if ([self.delegate respondsToSelector:@selector(fieldCell:updatedWithField:)]) {
+            [self.delegate fieldCell:self updatedWithField:self.field];
+        }
+    }];
+    
+    RMAction *cancelAction = [RMAction actionWithTitle:@"Cancel" style:RMActionStyleCancel andHandler:^(RMActionController *controller)
+    {
+        NSLog(@"Date selection was canceled");
+    }];
+    
+    self.dateController = [RMDateSelectionViewController actionControllerWithStyle:RMActionControllerStyleDefault selectAction:selectAction andCancelAction:cancelAction];
+    self.dateController.title= [NSString stringWithFormat:@"%@", self.field.title];
+    self.dateController.datePicker.date = [NSDate date];
+    self.dateController.datePicker.minuteInterval = 1;
+    self.dateController.disableBouncingEffects = YES;
+    self.dateController.disableMotionEffects = YES;
+    self.dateController.disableBlurEffects = YES;
+    
+    switch (self.field.type) {
+        case FORMFieldTypeDate:
+            self.dateController.datePicker.datePickerMode = UIDatePickerModeDate;
+            break;
+        case FORMFieldTypeDateTime:
+            self.dateController.datePicker.datePickerMode = UIDatePickerModeDateAndTime;
+            break;
+        case FORMFieldTypeTime:
+            self.dateController.datePicker.datePickerMode = UIDatePickerModeTime;
+            break;
+        default:
+            break;
+    }
+    
+    RMAction *nowAction = [RMAction actionWithTitle:@"Now" style:RMActionStyleAdditional andHandler:^(RMActionController *controller) {
+        ((UIDatePicker *)controller.contentView).date = [NSDate date];
+    }];
+    nowAction.dismissesActionController = NO;
+    [self.dateController addAction:nowAction];
+    
+    RMAction *clearAction = [RMAction actionWithTitle:@"Clear" style:RMActionStyleDestructive andHandler:^(RMActionController *controller) {
+        self.field.value = @"";
+        
+        [self updateWithField:self.field];
+        [self validate];
+        
+        if ([self.delegate respondsToSelector:@selector(fieldCell:updatedWithField:)]) {
+            [self.delegate fieldCell:self updatedWithField:self.field];
+        }
+    }];
+    [self.dateController addAction:clearAction];
+    
+    [self.dropdownDelegate presentDropdown:self.dateController fromRect:self.frame];
 }
+
+
 
 #pragma mark - FORMBaseFormFieldCell
 
 - (void)updateWithField:(FORMFields *)field {
     [super updateWithField:field];
 
-    FORMFieldValue *confirmValue = [FORMFieldValue new];
-    confirmValue.title = NSLocalizedString(@"Confirm", nil);
-    confirmValue.valueID = [NSDate date];
-    confirmValue.value = @YES;
-
-    FORMFieldValue *clearValue = [FORMFieldValue new];
-    clearValue.title = NSLocalizedString(@"Clear", nil);
-    clearValue.valueID = [NSDate date];
-    clearValue.value = @NO;
-
-    field.values = @[confirmValue, clearValue];
-
     if (field.value) {
-        self.valueView.text = [NSDateFormatter localizedStringFromDate:field.value
-                                                                   dateStyle:[self dateStyleForField:field]
-                                                                   timeStyle:[self timeStyleForField:field]];
+        self.valueView.text = field.value;
     } else {
         self.valueView.text = nil;
     }
@@ -99,35 +122,6 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
     self.iconImageView.image = [self fieldIcon];
 }
 
-- (NSDateFormatterStyle)dateStyleForField:(FORMFields *)field {
-
-    switch (field.type) {
-        case FORMFieldTypeDate:
-            return NSDateFormatterMediumStyle;
-            break;
-        case FORMFieldTypeDateTime:
-            return NSDateFormatterMediumStyle;
-            break;
-        default:
-            return NSDateFormatterNoStyle;
-            break;
-    }
-}
-
-- (NSDateFormatterStyle)timeStyleForField:(FORMFields *)field {
-
-    switch (field.type) {
-        case FORMFieldTypeDate:
-            return NSDateFormatterNoStyle;
-            break;
-        case FORMFieldTypeDateTime:
-            return NSDateFormatterShortStyle;
-            break;
-        default:
-            return NSDateFormatterShortStyle;
-            break;
-    }
-}
 
 - (UIImage *)fieldIcon {
     NSString *bundlePath = [[[NSBundle bundleForClass:self.class] resourcePath] stringByAppendingPathComponent:@"Form.bundle"];
@@ -156,61 +150,39 @@ UIPopoverControllerDelegate, FORMFieldValuesTableViewControllerDelegate>
 #pragma mark - FORMPopoverFormFieldCell
 
 - (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMFields *)field {
-    self.fieldValuesController.field = self.field;
-
-    if (self.field.info) {
-        CGRect frame = self.datePicker.frame;
-        frame.origin.y = 50.0f;
-        frame.size.height -= 25.0f;
-        [self.datePicker setFrame:frame];
-    }
 
     if (self.field.value) {
-        self.datePicker.date = self.field.value;
+        self.dateController.datePicker.date = [NSDate date];
     }
 
     if (self.field.minimumDate) {
-        self.datePicker.minimumDate = self.field.minimumDate;
+        self.dateController.datePicker.minimumDate = self.field.minimumDate;
     }
 
     if (self.field.maximumDate) {
-        self.datePicker.maximumDate = self.field.maximumDate;
-    }
-
-    switch (self.field.type) {
-        case FORMFieldTypeDate:
-            self.datePicker.datePickerMode = UIDatePickerModeDate;
-            break;
-        case FORMFieldTypeDateTime:
-            self.datePicker.datePickerMode = UIDatePickerModeDateAndTime;
-            break;
-        case FORMFieldTypeTime:
-            self.datePicker.datePickerMode = UIDatePickerModeTime;
-            break;
-        default:
-            break;
+        self.dateController.datePicker.maximumDate = self.field.maximumDate;
     }
 }
 
-#pragma mark - FORMFieldValuesTableViewControllerDelegate
 
-- (void)fieldValuesTableViewController:(FORMFieldValuesTableViewController *)fieldValuesTableViewController
-                      didSelectedValue:(FORMFieldValue *)selectedValue {
-    if ([selectedValue.value boolValue] == YES) {
-        self.field.value = self.datePicker.date;
-    } else {
-        self.field.value = nil;
-    }
+#pragma mark - Private methods
 
-    [self updateWithField:self.field];
-
-    [self validate];
-
-    [self.popoverController dismissPopoverAnimated:YES];
-
-    if ([self.delegate respondsToSelector:@selector(fieldCell:updatedWithField:)]) {
-        [self.delegate fieldCell:self updatedWithField:self.field];
-    }
+- (BOOL)becomeFirstResponder {
+    [self titleLabelPressed:self.valueView];
+    
+    return [super becomeFirstResponder];
 }
+
+
+#pragma mark - FORMTitleLabelDelegate
+
+- (void)titleLabelPressed:(FORMDropDownValueView *)titleLabel {
+    [[NSNotificationCenter defaultCenter] postNotificationName:FORMResignFirstResponderNotification object:nil];
+    
+    [self updateContentViewController:self.dateController withField:self.field];
+    
+    [self openDateSelectionController];
+}
+
 
 @end

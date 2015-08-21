@@ -32,7 +32,9 @@ static const CGFloat FORMTextFormFieldCellLabelMarginX = 5.0f;
 - (UILabel *)headingLabel {
     if (_headingLabel) return _headingLabel;
 
-    _headingLabel = [[UILabel alloc] initWithFrame:[self headingLabelFrame]];
+    _headingLabel = [[UILabel alloc] init];
+    _headingLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    _headingLabel.numberOfLines = 0;
 
     return _headingLabel;
 }
@@ -71,7 +73,8 @@ static const CGFloat FORMTextFormFieldCellLabelMarginX = 5.0f;
 - (void)updateWithField:(FORMFields *)field {
     self.headingLabel.hidden = (field.sectionSeparator);
     self.headingLabel.text = field.title;
-
+    self.headingLabel.frame = [self headingLabelFrame];
+    
     self.separatorView.hidden = !field.sectionSeparator;
 
     if (field.targets.count > 0) {
@@ -100,10 +103,32 @@ static const CGFloat FORMTextFormFieldCellLabelMarginX = 5.0f;
     CGFloat marginTop = FORMTextFormFieldCellLabelMarginTop;
 
     CGFloat width = CGRectGetWidth(self.frame) - (marginX * 2);
-    CGFloat height = FORMTextFormFieldCellLabelHeight;
+    CGFloat height = [self getHeightForText:self.headingLabel.text withWidth:width];
     CGRect frame = CGRectMake(marginX, marginTop, width, height);
 
     return frame;
+}
+
+- (CGFloat)getHeightForText:(NSString *)myText withWidth:(CGFloat)width
+{
+    NSString *textToMeasure;
+    
+    if(myText.length > 0)
+    {
+        textToMeasure = myText;
+    }
+    else
+    {
+        textToMeasure = @" ";
+    }
+    
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]}];
+    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(width*0.95, CGFLOAT_MAX)
+                                               options:NSStringDrawingUsesLineFragmentOrigin
+                                               context:nil];
+    CGFloat textViewHeight = rect.size.height;
+    
+    return textViewHeight;
 }
 
 - (CGRect)separatorViewFrame {

@@ -242,8 +242,8 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     CGFloat marginTop = FORMTextViewTopMargin;
     
     CGFloat width  = CGRectGetWidth(self.frame) - (marginX * 2);
-    CGFloat height = [self getHeightForTextView:self.textView] + (FORMTextViewInsideMargin * 2);
-    CGRect  frame  = CGRectMake(marginX, marginTop, width, height);
+    CGFloat height = [self getHeightForTextView:self.textView]  + (FORMTextViewInsideMargin * 2);
+    CGRect  frame  = CGRectMake(marginX, self.frame.size.height - height - marginTop, width, height);
     
     return frame;
 }
@@ -383,11 +383,6 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 {
     [self validate];
     
-    if (!self.textView.valid)
-    {
-        [self.textView setValid:[self.field validate]];
-    }
-    
     if (self.showTooltips)
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:FORMDismissTooltipNotification
@@ -401,21 +396,16 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 {
     self.field.value = text;
     [self validate];
-
-    if (!self.textView.valid)
-    {
-        [self.textView setValid:[self.field validate]];
-    }
     
     CGFloat initalHeight = self.textView.frame.size.height;
     self.textView.frame = [self textViewFrame];
     [self sizeToFit];
     self.textView.textContainerInset = UIEdgeInsetsMake(12, 5, 10, 25);
     CGFloat newHeight = self.textView.frame.size.height;
+    self.formField.size = CGSizeMake( self.formField.size.width , self.textView.frame.size.height + FORMFieldCellMarginTop + FORMFieldCellMarginBottom);
     
     if(initalHeight != newHeight && initalHeight != 1)
     {
-        self.formField.size = CGSizeMake( self.formField.size.width , self.textView.frame.size.height + FORMFieldCellMarginTop + FORMFieldCellMarginBottom);
         [self.delegate reloadCollectionView];
     }
     
@@ -553,6 +543,25 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     self.textView.rawText                      = [self rawTextForField:field];
     self.textView.hidden                       = (field.sectionSeparator);
     self.textView.userInteractionEnabled       = !field.disabled;
+    
+    CGFloat initalHeight = self.textView.frame.size.height;
+    self.textView.frame = [self textViewFrame];
+    [self sizeToFit];
+    self.textView.textContainerInset = UIEdgeInsetsMake(12, 5, 10, 25);
+    CGFloat newHeight = self.textView.frame.size.height;
+    self.formField.size = CGSizeMake( self.formField.size.width , self.textView.frame.size.height + FORMFieldCellMarginTop + FORMFieldCellMarginBottom);
+    
+    if(initalHeight != newHeight && initalHeight != 1)
+    {
+        [self.delegate reloadCollectionView];
+    }
+}
+
+
+
+- (void)validate {
+    BOOL validation = ([self.field validate] == FORMValidationResultTypeValid);
+    [self.textView setValid:validation];
 }
 
 

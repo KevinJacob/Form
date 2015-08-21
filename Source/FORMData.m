@@ -321,6 +321,20 @@
     }
 }
 
+- (NSDictionary *)allFormFields {
+    NSMutableDictionary *allFormFields = [NSMutableDictionary new];
+    
+    for (FORMGroup *group in self.groups) {
+        for (FORMSection *section in group.sections) {
+            for (FORMFields *field in section.fields) {
+                allFormFields[field.fieldID] = field;
+            }
+        }
+    }
+    
+    return [allFormFields copy];
+}
+
 - (NSDictionary *)invalidFormFields {
     NSMutableDictionary *invalidFormFields = [NSMutableDictionary new];
 

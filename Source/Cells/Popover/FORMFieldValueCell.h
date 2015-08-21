@@ -6,7 +6,8 @@ static NSString * const FORMFieldValueCellIdentifer = @"FORMFieldValueCellIdenti
 
 @interface FORMFieldValueCell : UITableViewCell
 
-@property (nonatomic, weak) FORMFieldValue *fieldValue;
+@property (nonatomic, weak) FORMFieldValue      *fieldValue;
+@property (nonatomic, weak) UIButton            *clearButton;
 
 - (void)setTextLabelFont:(UIFont *)font UI_APPEARANCE_SELECTOR;
 - (void)setTextLabelColor:(UIColor *)textColor UI_APPEARANCE_SELECTOR;

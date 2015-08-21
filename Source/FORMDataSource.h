@@ -10,6 +10,7 @@
 #import "FORMLayout.h"
 #import "FORMSection.h"
 #import "FORMTarget.h"
+#import "Form.h"
 
 typedef void (^FORMConfigureCellBlock)(id cell,
                                        NSIndexPath *indexPath,
@@ -47,6 +48,10 @@ typedef void (^FORMFieldFieldUpdatedBlock)(id cell,
                       layout:(FORMLayout *)layout
                       values:(NSDictionary *)values
                     disabled:(BOOL)disabled NS_DESIGNATED_INITIALIZER;
+
+
+@property (nonatomic, strong) UIViewController *viewController;
+@property (nonatomic, strong) NSMutableArray   *formFields;
 
 /*!
  * Provides a configuration block to optionally set up subclasses of @c FORMBaseFieldCell
@@ -104,6 +109,12 @@ typedef void (^FORMFieldFieldUpdatedBlock)(id cell,
  * @param targets A collection of targets
  */
 - (void)processTargets:(NSArray *)targets;
+
+/*!
+ * @discussion A method to retrieve all fields.
+ * @return A dictionary of all fields where the key is the @c fieldID and the value the @c FORMField.
+ */
+@property (nonatomic, readonly, copy) NSDictionary *allFields;
 
 /*!
  * @discussion A method to retrieve invalid fields.

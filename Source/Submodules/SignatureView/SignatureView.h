@@ -25,6 +25,8 @@
 
 @property (nonatomic, strong) UIToolbar                     *topBar;
 
+@property (nonatomic, assign) BOOL                          blank;
+
 
 - (void)setLineColor:(UIColor *)color;
 - (void)setLineWidth:(CGFloat)width;

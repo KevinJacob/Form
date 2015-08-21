@@ -1,8 +1,13 @@
 #import "FORMDataSource.h"
 
+#import "FORMViewController.h"
+#import "SceneDocFormViewContoller.h"
 #import "FORMBackgroundView.h"
 #import "FORMLayout.h"
 
+#import "FORMImageViewCell.h"
+#import "FORMNotepadCell.h"
+#import "FORMSpacerCell.h"
 #import "FORMTextFieldCell.h"
 #import "FORMTextViewCell.h"
 #import "FORMSelectFieldCell.h"
@@ -75,7 +80,10 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
                                  initialValues:values
                               disabledFieldIDs:@[]
                                       disabled:disabled];
-
+    
+    [collectionView registerClass:[FORMSpacerCell class]
+       forCellWithReuseIdentifier:FORMSpacerCellIdentifier];
+    
     [collectionView registerClass:[FORMTextFieldCell class]
        forCellWithReuseIdentifier:FORMTextFieldCellIdentifier];
 
@@ -99,6 +107,12 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     
     [collectionView registerClass:[FORMLabelFieldCell class]
        forCellWithReuseIdentifier:FORMLabelFieldCellIdentifier];
+    
+    [collectionView registerClass:[FORMImageViewCell class]
+       forCellWithReuseIdentifier:FORMImageViewCellIdentifier];
+    
+    [collectionView registerClass:[FORMNotepadCell class]
+       forCellWithReuseIdentifier:FORMNotepadCellIdentifier];
 
     [collectionView registerClass:[FORMGroupHeaderView class]
        forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
@@ -173,8 +187,20 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             identifier = FORMSelectFormFieldCellIdentifier;
             break;
         
+        case FORMFieldTypeSpacer:
+            identifier = FORMSpacerCellIdentifier;
+            break;
+            
         case FORMFieldTypeSignature:
             identifier = FORMSignatureFieldCellIdentifier;
+            break;
+            
+        case FORMFieldTypeImage:
+            identifier = FORMImageViewCellIdentifier;
+            break;
+            
+        case FORMFieldTypeNotepad:
+            identifier = FORMNotepadCellIdentifier;
             break;
         
         case FORMFieldTypeCheckbox:
@@ -203,17 +229,80 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         case FORMFieldTypeCustom: abort();
     }
 
-    FORMBaseFieldCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
-                                                                        forIndexPath:indexPath];
-    cell.delegate = self;
-
-    if (self.configureCellBlock) {
-        self.configureCellBlock(cell, indexPath, field);
-    } else {
-        cell.field = field;
+    FormField *fieldChosen;
+    if(self.formFields.count > 0 && field.sectionSeparator == NO)
+    {
+        fieldChosen = [self.formFields firstObject];
+        [self.formFields removeObjectAtIndex:0];
     }
-
-    return cell;
+    
+    
+    if([identifier isEqualToString:FORMSignatureFieldCellIdentifier])
+    {
+        FORMSignatureFieldCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
+                                                                                 forIndexPath:indexPath];
+        
+        cell.delegate = self;
+        cell.sigDelegate = (FORMViewController *)self.viewController;
+        [self fieldCell:cell updatedWithField:field];
+        
+        if (self.configureCellBlock) {
+            self.configureCellBlock(cell, indexPath, field);
+        } else {
+            cell.field = field;
+        }
+        
+        return cell;
+    }
+    else if([identifier isEqualToString:FORMImageViewCellIdentifier] || [identifier isEqualToString:FORMNotepadCellIdentifier])
+    {
+        FORMThumbnailViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
+                                                                                 forIndexPath:indexPath];
+        
+        cell.delegate = self;
+        cell.formfield = fieldChosen;
+        [self fieldCell:cell updatedWithField:field];
+        
+        if (self.configureCellBlock) {
+            self.configureCellBlock(cell, indexPath, field);
+        } else {
+            cell.field = field;
+        }
+        
+        return cell;
+    }
+    else if([identifier isEqualToString:FORMSelectFormFieldCellIdentifier] || [identifier isEqualToString:FORMDateFormFieldCellIdentifier])
+    {
+        FORMPopoverFieldCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
+                                                                                 forIndexPath:indexPath];
+        
+        cell.delegate = self;
+        cell.dropdownDelegate = (FORMViewController *)self.viewController;
+        [self fieldCell:cell updatedWithField:field];
+        
+        if (self.configureCellBlock) {
+            self.configureCellBlock(cell, indexPath, field);
+        } else {
+            cell.field = field;
+        }
+        
+        return cell;
+    }
+    else
+    {
+        FORMBaseFieldCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
+                                                                            forIndexPath:indexPath];
+        cell.delegate = self;
+        [self fieldCell:cell updatedWithField:field];
+        
+        if (self.configureCellBlock) {
+            self.configureCellBlock(cell, indexPath, field);
+        } else {
+            cell.field = field;
+        }
+        
+        return cell;
+    }
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView
@@ -318,7 +407,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         width = floor(deviceWidth * (field.size.width / 100.0f));
         if(field.type == FORMFieldTypeMultilineText || field.type == FORMFieldTypeSelect)
         {
-            if(field.value)
+            if(field.size.height > FORMFieldCellItemHeight)
             {
                 height = field.size.height;
             }
@@ -331,9 +420,36 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         {
             height = field.size.height * FORMFieldCellItemHeight;
         }
+        
+        if(field.title.length > 0)
+        {
+            height = height + [self getHeightForText:field.title withWidth:(width - 30)];
+        }
     }
 
     return CGSizeMake(width, height);
+}
+
+- (CGFloat)getHeightForText:(NSString *)myText withWidth:(CGFloat)width
+{
+    NSString *textToMeasure;
+    
+    if(myText.length > 0)
+    {
+        textToMeasure = myText;
+    }
+    else
+    {
+        textToMeasure = @" ";
+    }
+    
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]}];
+    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(width*0.95, CGFLOAT_MAX)
+                                               options:NSStringDrawingUsesLineFragmentOrigin
+                                               context:nil];
+    CGFloat textViewHeight = rect.size.height;
+    
+    return textViewHeight;
 }
 
 - (FORMFields *)fieldAtIndexPath:(NSIndexPath *)indexPath {
@@ -612,7 +728,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             [self.formData.values removeObjectForKey:field.fieldID];
         } else if ([field.value isKindOfClass:[FORMFieldValue class]]) {
             FORMFieldValue *fieldValue = field.value;
-            self.formData.values[field.fieldID] = fieldValue.valueID;
+            self.formData.values[field.fieldID] = fieldValue.value;
         } else {
             self.formData.values[field.fieldID] = field.value;
         }
@@ -817,6 +933,10 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
 }
 
 #pragma mark - FORMData bridge
+
+- (NSDictionary *)allFields {
+    return [self.formData allFormFields];
+}
 
 - (NSDictionary *)invalidFields {
     return [self.formData invalidFormFields];

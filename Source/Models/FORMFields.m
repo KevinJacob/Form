@@ -92,14 +92,6 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
 
     _value = [dictionary andy_valueForKey:@"value"];
 
-    BOOL isDateType = (_type == FORMFieldTypeDate ||
-                       _type == FORMFieldTypeDateTime ||
-                       _type == FORMFieldTypeTime);
-
-    if (_value && isDateType) {
-        _value = [dateFormatter dateFromString:_value];
-    }
-
     return self;
 }
 
@@ -119,16 +111,12 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
 
         case FORMFieldTypeDateTime:
         case FORMFieldTypeTime:
-        case FORMFieldTypeDate: {
-            if ([fieldValue isKindOfClass:[NSString class]]) {
-                NSDateFormatter *formatter = [NSDateFormatter new];
-                [formatter setDateFormat:@"yyyy'-'MM'-'dd' 'HH':'mm':'ss' 'Z"];
-                resultValue = [formatter dateFromString:fieldValue];
-            }
-        } break;
-
+        case FORMFieldTypeDate:
         case FORMFieldTypeText:
         case FORMFieldTypeSignature:
+        case FORMFieldTypeImage:
+        case FORMFieldTypeNotepad:
+        case FORMFieldTypeSpacer:
         case FORMFieldTypeMultilineText:
         case FORMFieldTypeCheckbox:
         case FORMFieldTypeLabel:
@@ -166,7 +154,8 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
             return @([self.value integerValue]);
 
         case FORMFieldTypeSignature:
-            
+        case FORMFieldTypeImage:
+        case FORMFieldTypeNotepad:
         case FORMFieldTypeText:
         case FORMFieldTypeMultilineText:
         case FORMFieldTypeCheckbox:
@@ -179,6 +168,7 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
 
         case FORMFieldTypeButton:
         case FORMFieldTypeCustom:
+        case FORMFieldTypeSpacer:
             return nil;
     }
 }
@@ -245,6 +235,12 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
         return FORMFieldTypeTime;
     } else if ([typeString isEqualToString:@"signature"]) {
         return FORMFieldTypeSignature;
+    } else if ([typeString isEqualToString:@"image"]) {
+        return FORMFieldTypeImage;
+    } else if ([typeString isEqualToString:@"notepad"]) {
+        return FORMFieldTypeNotepad;
+    } else if ([typeString isEqualToString:@"spacer"]) {
+        return FORMFieldTypeSpacer;
     } else if ([typeString isEqualToString:@"multiline_text"]) {
         return FORMFieldTypeMultilineText;
     } else if ([typeString isEqualToString:@"checkbox"]) {

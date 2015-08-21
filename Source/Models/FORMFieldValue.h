@@ -9,7 +9,7 @@
 @property (nonatomic, copy) NSString *info;
 @property (nonatomic) NSArray *targets;
 @property (nonatomic) FORMFields *field;
-@property (nonatomic) NSNumber *value;
+@property (nonatomic) NSString *value;
 @property (nonatomic) BOOL defaultValue;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary NS_DESIGNATED_INITIALIZER;

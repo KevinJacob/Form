@@ -256,11 +256,11 @@ static const NSInteger FORMTooltipNumberOfLines = 4;
 - (CGRect)textFieldFrame {
     CGFloat marginX = FORMTextFieldCellMarginX;
     CGFloat marginTop = FORMFieldCellMarginTop;
-    CGFloat marginBotton = FORMFieldCellMarginBottom;
+    //CGFloat marginBotton = FORMFieldCellMarginBottom;
 
     CGFloat width  = CGRectGetWidth(self.frame) - (marginX * 2);
-    CGFloat height = CGRectGetHeight(self.frame) - marginTop - marginBotton;
-    CGRect  frame  = CGRectMake(marginX, marginTop, width, height);
+    CGFloat height = 45;
+    CGRect  frame  = CGRectMake(marginX, self.frame.size.height - height - marginTop, width, height);
 
     return frame;
 }

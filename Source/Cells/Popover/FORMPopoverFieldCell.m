@@ -6,7 +6,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
 @interface FORMPopoverFieldCell () <FORMDropDownValueDelegate, UIPopoverControllerDelegate>
 
-@property (nonatomic) UIViewController *contentViewController;
+@property (nonatomic) RMActionController *contentViewController;
 @property (nonatomic) CGSize contentSize;
 
 @end
@@ -15,7 +15,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
 #pragma mark - Initializers
 
-- (instancetype)initWithFrame:(CGRect)frame contentViewController:(UIViewController *)contentViewController
+- (instancetype)initWithFrame:(CGRect)frame contentViewController:(RMActionController *)contentViewController
                andContentSize:(CGSize)contentSize {
     self = [super initWithFrame:frame];
     if (!self) return nil;
@@ -40,16 +40,6 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
     return _valueView;
 }
 
-- (UIPopoverController *)popoverController {
-    if (_popoverController) return _popoverController;
-
-    _popoverController = [[UIPopoverController alloc] initWithContentViewController:self.contentViewController];
-    _popoverController.delegate = self;
-    _popoverController.popoverContentSize = self.contentSize;
-    _popoverController.backgroundColor = [UIColor whiteColor];
-
-    return _popoverController;
-}
 
 - (UIImageView *)iconImageView {
     if (_iconImageView) return _iconImageView;
@@ -59,14 +49,6 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
     _iconImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
     return _iconImageView;
-}
-
-#pragma mark - Private methods
-
-- (BOOL)becomeFirstResponder {
-    [self titleLabelPressed:self.valueView];
-
-    return [super becomeFirstResponder];
 }
 
 #pragma mark - FORMBaseFormFieldCell
@@ -111,38 +93,23 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 - (CGRect)fieldValueViewFrame {
     CGFloat marginX = FORMTextFieldCellMarginX;
     CGFloat marginTop = FORMFieldCellMarginTop;
-    CGFloat marginBotton = FORMFieldCellMarginBottom;
+    //CGFloat marginBotton = FORMFieldCellMarginBottom;
 
     CGFloat width = CGRectGetWidth(self.frame) - (marginX * 2);
-    CGFloat height = CGRectGetHeight(self.frame) - marginTop - marginBotton;
-    CGRect frame = CGRectMake(marginX, marginTop, width, height);
+    CGFloat height = 45;
+    CGRect frame = CGRectMake(marginX, self.frame.size.height - height - marginTop, width, height);
 
     return frame;
 }
 
 - (CGRect)iconImageViewFrame {
     CGFloat x = CGRectGetWidth(self.frame) - FORMIconButtonWidth - (FORMTextFieldCellMarginX * 2);
-    CGFloat y = FORMIconButtonHeight - 4;
+    CGFloat y = self.valueView.frame.origin.y + 4;
     CGFloat width = FORMIconButtonWidth;
     CGFloat height = FORMIconButtonHeight;
     CGRect frame = CGRectMake(x, y, width, height);
 
     return frame;
-}
-
-#pragma mark - FORMTitleLabelDelegate
-
-- (void)titleLabelPressed:(FORMDropDownValueView *)titleLabel {
-    [[NSNotificationCenter defaultCenter] postNotificationName:FORMResignFirstResponderNotification object:nil];
-
-    [self updateContentViewController:self.contentViewController withField:self.field];
-
-    if (!self.popoverController.isPopoverVisible) {
-        [self.popoverController presentPopoverFromRect:self.bounds
-                                                inView:self
-                              permittedArrowDirections:UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown
-                                              animated:YES];
-    }
 }
 
 @end

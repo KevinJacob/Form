@@ -20,4 +20,5 @@ static NSString * const FORMFieldValuesTableViewHeaderIdentifier = @"FORMFieldVa
 - (void)setInfoLabelFont:(UIFont *)infoLabelFont UI_APPEARANCE_SELECTOR;
 - (void)setInfoLabelTextColor:(UIColor *)infoLabelTextColor UI_APPEARANCE_SELECTOR;
 
+- (void)updateLabelFrames:(CGFloat)width;
 @end

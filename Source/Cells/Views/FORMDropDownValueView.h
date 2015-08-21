@@ -20,6 +20,7 @@
 
 @protocol FORMDropDownValueDelegate <NSObject>
 
+@optional
 - (void)titleLabelPressed:(FORMDropDownValueView *)valueView;
 
 @end
