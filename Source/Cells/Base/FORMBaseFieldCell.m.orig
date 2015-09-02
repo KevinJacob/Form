@@ -79,11 +79,15 @@ static NSString * const FORMHeadingLabelTextColorKey = @"heading_label_text_colo
 - (void)updateWithField:(FORMFields *)field {
     self.headingLabel.hidden = (field.sectionSeparator);
     self.headingLabel.text = field.title;
+<<<<<<< HEAD
     self.headingLabel.frame = [self headingLabelFrame];
+=======
+    self.styles = field.styles;
 
     if (field.sectionSeparator) {
         self.separatorView.styles = field.styles;
     }
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
     
     self.separatorView.hidden = !field.sectionSeparator;
 

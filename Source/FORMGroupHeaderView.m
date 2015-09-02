@@ -1,4 +1,10 @@
 #import "FORMGroupHeaderView.h"
+@import Hex;
+
+static NSString * const FORMHeaderLabelFontKey = @"font";
+static NSString * const FORMHeaderLabelFontSizeKey = @"font_size";
+static NSString * const FORMHeaderLabelTextColorKey = @"text_color";
+static NSString * const FORMHeaderBackgroundColorKey = @"background_color";
 
 @interface FORMGroupHeaderView ()
 
@@ -54,7 +60,9 @@
 
 - (void)headerTappedAction {
     if ([self.delegate respondsToSelector:@selector(groupHeaderViewWasPressed:)]) {
-        [self.delegate groupHeaderViewWasPressed:self];
+        if (self.collapsible) {
+            [self.delegate groupHeaderViewWasPressed:self];
+        }
     }
 }
 
@@ -65,14 +73,34 @@
 }
 
 - (void)setHeaderLabelFont:(UIFont *)headerLabelFont {
+    NSString *styleFont = [self.styles valueForKey:FORMHeaderLabelFontKey];
+    NSString *styleFontSize = [self.styles valueForKey:FORMHeaderLabelFontSizeKey];
+    if ([styleFont length] > 0) {
+        if ([styleFontSize length] > 0) {
+            headerLabelFont = [UIFont fontWithName:styleFont size:[styleFontSize floatValue]];
+        } else {
+            headerLabelFont = [UIFont fontWithName:styleFont size:headerLabelFont.pointSize];
+        }
+    }
+    
     self.headerLabel.font = headerLabelFont;
 }
 
 - (void)setHeaderLabelTextColor:(UIColor *)headerLabelTextColor {
+    NSString *style = [self.styles valueForKey:FORMHeaderLabelTextColorKey];
+    if ([style length] > 0) {
+        headerLabelTextColor = [UIColor colorFromHex:style];
+    }
+    
     self.headerLabel.textColor = headerLabelTextColor;
 }
 
 - (void)setHeaderBackgroundColor:(UIColor *)backgroundColor {
+    NSString *style = [self.styles valueForKey:FORMHeaderBackgroundColorKey];
+    if ([style length] > 0) {
+        backgroundColor = [UIColor colorFromHex:style];
+    }
+    
     self.backgroundColor = backgroundColor;
 }
 

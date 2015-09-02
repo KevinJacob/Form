@@ -14,7 +14,7 @@
 #import "FORMButtonFieldCell.h"
 #import "FORMBaseFieldCell.h"
 
-#import "UIColor+Hex.h"
+@import Hex;
 
 
 @implementation FORMDefaultStyle
@@ -28,11 +28,16 @@
     [[FORMBaseFieldCell appearance] setHeadingLabelTextColor:[UIColor blackColor]];
     [[FORMTextField appearance] setCornerRadius:kFormsCornerRadius];
 
+<<<<<<< HEAD
     [[FORMBackgroundView appearance] setBackgroundColor:[UIColor clearColor]];
-    
-    [[FORMSeparatorView appearance] setSeparatorColor:[UIColor colorFromHex:@"C6C6C6"]];
 
     [[FORMSeparatorView appearance] setBackgroundColor:[UIColor colorFromHex:@"C6C6C6"]];
+=======
+    [[FORMBackgroundView appearance] setBackgroundColor:[UIColor colorFromHex:@"DAE2EA"]];
+    [[FORMBackgroundView appearance] setGroupBackgroundColor:[UIColor colorFromHex:@"DAE2EA"]];
+    
+    [[FORMSeparatorView appearance] setSeparatorColor:[UIColor colorFromHex:@"C6C6C6"]];
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 
     [[FORMButtonFieldCell appearance] setBackgroundColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMButtonFieldCell appearance] setTitleLabelFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:16.0]];
@@ -72,6 +77,7 @@
     [[FORMTextField appearance] setValidBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMTextField appearance] setInvalidBackgroundColor:[UIColor colorFromHex:@"FFD7D7"]];
     [[FORMTextField appearance] setInvalidBorderColor:[UIColor colorFromHex:@"EC3031"]];
+<<<<<<< HEAD
     
     [[FORMTextView appearance] setFont:[UIFont fontWithName:@"AvenirNext-Regular" size:15.0]];
     [[FORMTextView appearance] setTextColor:[UIColor blackColor]];
@@ -107,6 +113,11 @@
     [[FORMSignatureFieldCell appearance] setInvalidBackgroundColor:[UIColor colorFromHex:@"FFD7D7"]];
     [[FORMSignatureFieldCell appearance] setInvalidBorderColor:[UIColor colorFromHex:@"EC3031"]];
     [[FORMSignatureFieldCell appearance] setCornerRadius:kFormsCornerRadius];
+=======
+    [[FORMTextField appearance] setClearButtonColor:[UIColor colorFromHex:@"3DAFEB"]];
+    [[FORMTextField appearance] setMinusButtonColor:[UIColor colorFromHex:@"3DAFEB"]];
+    [[FORMTextField appearance] setPlusButtonColor:[UIColor colorFromHex:@"3DAFEB"]];
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 
     [[FORMThumbnailViewCell appearance] setActiveBackgroundColor:[UIColor colorFromHex:@"E1F5FF"]];
     [[FORMThumbnailViewCell appearance] setActiveBorderColor:[UIColor colorFromHex:@"1A242F"]];

@@ -122,6 +122,7 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     }
     
     if (self.field.values.count <= FORMSelectMaxItemCount) {
+<<<<<<< HEAD
         CGSize currentSize = [self popoverSize];
         
         self.fieldValuesController.preferredContentSize = currentSize;
@@ -137,6 +138,12 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
         self.fieldValuesController.selectButton.frame = CGRectMake(currentSize.width - 100, 0, 100, 35);
     }
 }
+=======
+        CGSize currentSize = FORMSelectPopoverSize;
+
+        CGFloat labelHeight = floorf(self.fieldValuesController.headerView.labelHeight);
+        CGSize customSize = CGSizeMake(currentSize.width, (FORMFieldValuesCellHeight * self.field.values.count) + labelHeight + FORMTitleLabelY);
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 
 
 -(FORMFieldValue *)fieldWithValue:(NSString *)value

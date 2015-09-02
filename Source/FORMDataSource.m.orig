@@ -81,6 +81,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
                                  initialValues:values
                               disabledFieldIDs:@[]
                                       disabled:disabled];
+<<<<<<< HEAD
     
     [collectionView registerClass:[FORMSpacerCell class]
        forCellWithReuseIdentifier:FORMSpacerCellIdentifier];
@@ -121,6 +122,8 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [collectionView registerClass:[FORMGroupHeaderView class]
        forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
               withReuseIdentifier:FORMHeaderReuseIdentifier];
+=======
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardDidShow:)
@@ -244,6 +247,10 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         case FORMFieldTypeText:
         case FORMFieldTypeFloat:
         case FORMFieldTypeNumber:
+<<<<<<< HEAD
+        case FORMFieldTypeCount:
+            identifier = FORMTextFieldCellIdentifier;
+=======
             identifier = [NSString stringWithFormat:@"%@-%@", FORMTextFieldCellIdentifier, field.fieldID];
             [collectionView registerClass:[FORMTextFieldCell class]
                forCellWithReuseIdentifier:identifier];
@@ -254,6 +261,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             identifier = [NSString stringWithFormat:@"%@-%@", FORMCountFieldCellIdentifier, field.fieldID];
             [collectionView registerClass:[FORMTextFieldCell class]
                forCellWithReuseIdentifier:identifier];
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
             break;
         
         case FORMFieldTypeButton:
@@ -602,11 +610,13 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     return !_disabled;
 }
 
+<<<<<<< HEAD
+=======
 - (void)collapseAllGroups {
     [self collapseAllGroupsForCollectionView:self.collectionView];
 }
-- (void)collapseAllGroupsForCollectionView:(UICollectionView *)collectionView {
 
+- (void)collapseAllGroupsForCollectionView:(UICollectionView *)collectionView {
     NSMutableArray *indexPaths = [NSMutableArray new];
 
     [self.formData.groups enumerateObjectsUsingBlock:^(FORMGroup *formGroup, NSUInteger idx, BOOL *stop) {
@@ -625,6 +635,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     [collectionView.collectionViewLayout invalidateLayout];
 }
 
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 - (void)reloadWithDictionary:(NSDictionary *)dictionary {
     [self.formData.values setValuesForKeysWithDictionary:dictionary];
 

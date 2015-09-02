@@ -9,10 +9,15 @@
 
 @interface FORMPopoverFieldCell : FORMBaseFieldCell
 
+<<<<<<< HEAD
 @property (nonatomic, weak) id <DropdownDelegate>               dropdownDelegate;
 @property (nonatomic) FORMDropDownValueView                     *valueView;
 @property (nonatomic) UIPopoverController                       *popoverController;
 @property (nonatomic) UIImageView                               *iconImageView;
+=======
+@property (nonatomic) FORMFieldValueLabel *fieldValueLabel;
+@property (nonatomic) UIImageView *iconImageView;
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 
 - (instancetype)initWithFrame:(CGRect)frame contentViewController:(UIViewController *)controller
                andContentSize:(CGSize)contentSize NS_DESIGNATED_INITIALIZER;

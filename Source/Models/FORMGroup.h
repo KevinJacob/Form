@@ -7,10 +7,12 @@
 
 @property (nonatomic) NSString *groupID;
 @property (nonatomic) NSString *title;
+@property (nonatomic) NSDictionary *styles;
 @property (nonatomic) NSMutableArray *sections;
 @property (nonatomic) NSNumber *position;
 
 @property (nonatomic) BOOL collapsed;
+@property (nonatomic) BOOL collapsible;
 @property (nonatomic) BOOL shouldValidate;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary

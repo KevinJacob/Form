@@ -93,6 +93,7 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
     [self addClearButton];
     [self createCountButtons];
 
+<<<<<<< HEAD
     UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [clearButton setImage:[UIImage imageNamed:@"forms_clear"
                                      inBundle:bundle
@@ -102,6 +103,8 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
     self.rightView = clearButton;
     self.rightViewMode = UITextFieldViewModeWhileEditing;
   
+=======
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
     return self;
 }
 
@@ -383,7 +386,11 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
 }
 
 - (void)minusButtonAction {
+<<<<<<< HEAD
     NSNumber *number = [NSNumber numberWithInt:([self.rawText integerValue] - 1.0)];
+=======
+    NSNumber *number = @([self.rawText integerValue] - 1);
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
     if ([number integerValue] < 0) {
         self.rawText = @"0";
     } else {
@@ -397,7 +404,11 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
 }
 
 - (void)plusButtonAction {
+<<<<<<< HEAD
     NSNumber *number = [NSNumber numberWithInt:[self.rawText integerValue] + 1.0];
+=======
+    NSNumber *number = @([self.rawText integerValue] + 1);
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
     self.rawText = [number stringValue];
 
     if ([self.textFieldDelegate respondsToSelector:@selector(textFormField:didUpdateWithText:)]) {
@@ -452,6 +463,7 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
     }
 }
 
+<<<<<<< HEAD
 - (void)setCountButtons {
     NSString *bundlePath = [[[NSBundle bundleForClass:self.class] resourcePath] stringByAppendingPathComponent:@"Form.bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath: bundlePath];
@@ -481,6 +493,8 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
     self.textAlignment = NSTextAlignmentCenter;
 }
 
+=======
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 - (void)setCustomFont:(UIFont *)font {
     NSString *styleFont = [self.styles valueForKey:FORMTextFieldFontKey];
     NSString *styleFontSize = [self.styles valueForKey:FORMTextFieldFontSizeKey];

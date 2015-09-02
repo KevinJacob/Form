@@ -1,8 +1,12 @@
 #import "FORMBackgroundView.h"
+<<<<<<< HEAD
 #import "FORMDefaultStyle.h"
+=======
+#import "FORMLayoutAttributes.h"
 @import Hex;
 
 static NSString * const FORMGroupBackgroundColorKey = @"background_color";
+>>>>>>> d69e76084cc00edd3195d0456af8da646fae5730
 
 @interface FORMBackgroundView ()
 
