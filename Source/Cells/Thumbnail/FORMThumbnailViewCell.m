@@ -50,11 +50,11 @@ static UIColor *invalidBorderColor;
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     CGFloat screenScale = [[UIScreen mainScreen] scale];
     CGFloat deviceWidth = screenBounds.size.width * screenScale;
-    double inchPercentageofWidth = ((devicePPI/deviceWidth)*100);
+    double inchPercentageofWidth = ((devicePPI/deviceWidth)*screenBounds.size.width);
     
     UIImageView *thumbImage = [[UIImageView alloc] initWithFrame:CGRectMake(FORMThumbFieldMargin,
                                                                             self.frame.size.height - 195 - FORMThumbFieldTopMargin,
-                                                                            (((inchPercentageofWidth/100) * deviceWidth) - (FORMThumbFieldMargin * 2)),
+                                                                            inchPercentageofWidth * 1,
                                                                             195)];
     thumbImage.layer.borderWidth = 1.0f;
     thumbImage.layer.borderColor = [UIColor blackColor].CGColor;
@@ -81,11 +81,11 @@ static UIColor *invalidBorderColor;
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     CGFloat screenScale = [[UIScreen mainScreen] scale];
     CGFloat deviceWidth = screenBounds.size.width * screenScale;
-    double inchPercentageofWidth = ((devicePPI/deviceWidth)*100);
+    double inchPercentageofWidth = ((devicePPI/deviceWidth)*screenBounds.size.width);
     
     self.thumbnailImageView.frame = CGRectMake(FORMThumbFieldMargin,
                                                self.frame.size.height - 195 - FORMThumbFieldTopMargin,
-                                               (((inchPercentageofWidth/100) * deviceWidth) - (FORMThumbFieldMargin * 2)),
+                                               inchPercentageofWidth * 1,
                                                195);
 }
 

@@ -119,6 +119,7 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
         case FORMFieldTypeSpacer:
         case FORMFieldTypeMultilineText:
         case FORMFieldTypeCheckbox:
+        case FORMFieldTypeSwitch:
         case FORMFieldTypeLabel:
         case FORMFieldTypeSelect:
         case FORMFieldTypeButton:
@@ -159,6 +160,7 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
         case FORMFieldTypeText:
         case FORMFieldTypeMultilineText:
         case FORMFieldTypeCheckbox:
+        case FORMFieldTypeSwitch:
         case FORMFieldTypeLabel:
         case FORMFieldTypeSelect:
         case FORMFieldTypeDate:
@@ -245,6 +247,8 @@ static NSString * const FORMFormatterSelector = @"formatString:reverse:";
         return FORMFieldTypeMultilineText;
     } else if ([typeString isEqualToString:@"checkbox"]) {
         return FORMFieldTypeCheckbox;
+    } else if ([typeString isEqualToString:@"switch"]) {
+        return FORMFieldTypeSwitch;
     } else if ([typeString isEqualToString:@"label"]) {
         return FORMFieldTypeLabel;
     } else if ([typeString isEqualToString:@"float"]) {

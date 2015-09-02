@@ -32,6 +32,16 @@
 }
 
 
+
+-(void)prepareForReuse
+{
+    self.thumbnailImageView.contentMode = UIViewContentModeCenter;
+    self.thumbnailImageView.image = [UIImage imageNamed:kDefaultPhotoImage];
+    self.imageAdded = NO;
+    self.formfield = nil;
+}
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #pragma mark - Signature Set/Get
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -40,13 +50,15 @@
 {
     self.thumbnailImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.imageAdded = YES;
-    NSString *photoImageFilePath = [self.notepad pathForThumbnail];
+    NSString *photoImageFilePath = [self.field.notepad pathForThumbnail];
     UIImage *image = [[UIImage alloc] initWithContentsOfFile:photoImageFilePath];
     
     if (image)
     {
         self.thumbnailImageView.image = image;
     }
+    
+    [SVProgressHUD dismiss];
 }
 
 
@@ -70,14 +82,17 @@
     self.alpha                                      = field.disabled ? 0.5f : 1.0f;
     self.thumbnailImageView.userInteractionEnabled  = field.disabled ? NO : YES;
     
-    if(self.formfield.notepads)
+    // Needs to check this property first in case of updates from cloud
+    if(self.formfield.notepads.count > 0)
     {
-        self.notepad = self.formfield.notepads;
-        if(!self.notepad.isComplete)
+        [SVProgressHUD showWithStatus:@"Downloading Notepad..."];
+        
+        self.field.notepad = [[self.formfield.notepads allObjects] firstObject];
+        if(!self.field.notepad.isComplete)
         {
             SDCThriftGCDManager *GCDManager = [SDCThriftGCDManager sharedInstance];
-            [GCDManager getNotepad:self.notepad
-                         sceneFile:self.notepad.sceneFile
+            [GCDManager getNotepad:self.field.notepad
+                         sceneFile:self.field.notepad.sceneFile
                       successBlock:^{
                           [self setImage];
                       }
@@ -88,6 +103,10 @@
         {
             [self setImage];
         }
+    }
+    else if (self.field.notepad)
+    {
+        [self setImage];
     }
 }
 

@@ -35,15 +35,21 @@
     return self;
 }
 
+
 #pragma mark - Setters
 
 - (void)setFieldValue:(FORMFieldValue *)fieldValue {
     _fieldValue = fieldValue;
 
     self.textLabel.text = fieldValue.title;
+    self.clearButton.hidden = !fieldValue.selected;
 
     if (fieldValue.info) {
         self.detailTextLabel.text = fieldValue.info;
+    }
+    else
+    {
+       self.detailTextLabel.text = nil;
     }
 }
 

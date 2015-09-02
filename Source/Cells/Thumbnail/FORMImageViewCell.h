@@ -14,7 +14,5 @@ static NSString * const FORMImageViewCellIdentifier = @"FORMImageViewCellIdentif
 
 @interface FORMImageViewCell : FORMThumbnailViewCell
 
-@property (nonatomic, strong) Images                            *photo;
-
 
 @end

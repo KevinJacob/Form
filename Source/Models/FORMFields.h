@@ -19,6 +19,7 @@ typedef NS_ENUM(NSInteger, FORMFieldType) {
     FORMFieldTypeSpacer,
     FORMFieldTypeMultilineText,
     FORMFieldTypeCheckbox,
+    FORMFieldTypeSwitch,
     FORMFieldTypeLabel,
     FORMFieldTypeFloat,
     FORMFieldTypeNumber,
@@ -35,6 +36,7 @@ typedef NS_ENUM(NSInteger, FORMFieldType) {
 @property (nonatomic) BOOL hidden;
 @property (nonatomic) CGSize size;
 @property (nonatomic) NSNumber *position;
+@property (nonatomic) id valueID;
 @property (nonatomic) id value;
 @property (nonatomic) NSString *typeString;
 @property (nonatomic) NSString *inputTypeString;
@@ -54,6 +56,9 @@ typedef NS_ENUM(NSInteger, FORMFieldType) {
 @property (nonatomic) BOOL valid;
 @property (nonatomic) FORMValidationResultType validationResultType;
 @property (nonatomic) BOOL sectionSeparator;
+
+@property (nonatomic, strong) Images    *photo;
+@property (nonatomic, strong) Notepad   *notepad;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary
                           position:(NSInteger)position

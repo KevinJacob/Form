@@ -109,6 +109,10 @@ static const CGFloat FORMCheckboxFieldMargin = 10.0f;
     {
         [self.check setSelected:YES];
     }
+    else
+    {
+        [self.check setSelected:NO];
+    }
 }
 
 

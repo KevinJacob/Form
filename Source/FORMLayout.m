@@ -156,9 +156,10 @@
         CGFloat width = self.collectionViewContentSize.width - (FORMBackgroundViewMargin * 2);
 
         attributes.frame = CGRectMake(FORMBackgroundViewMargin,
-                                      CGRectGetMaxY(headerAttributes.frame),
-                                      width, height -
-                                      FORMHeaderContentMargin);
+                                    CGRectGetMaxY(headerAttributes.frame),
+                                    width, height -
+                                    FORMHeaderContentMargin);
+        
         attributes.zIndex = -1;
 
         return attributes;

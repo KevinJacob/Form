@@ -18,12 +18,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (!self) return nil;
-
-    self.backgroundView = ({
-        UIView * view = [[UIView alloc] initWithFrame:self.bounds];
-        view.backgroundColor = [UIColor colorFromHex:@"1A242F"];
-        view;
-    });
+    
     [self addSubview:self.titleLabel];
     [self addSubview:self.infoLabel];
 
@@ -33,7 +28,10 @@
 #pragma mark - Getters
 
 - (CGRect)titleLabelFrame {
-    return CGRectMake(0.0f, FORMTitleLabelY, FORMFieldValuesHeaderWidth, FORMLabelHeight);
+    return CGRectMake(0,
+                      10,
+                      self.frame.size.width,
+                      [self getHeightForTextView:self.field.title withWidth:self.frame.size.width]);
 }
 
 - (UILabel *)titleLabel {
@@ -43,16 +41,19 @@
     _titleLabel.textAlignment = NSTextAlignmentCenter;
     _titleLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
     _titleLabel.numberOfLines = 0;
-    _titleLabel.text = self.field.value;
+    _titleLabel.text = self.field.title;
 
     return _titleLabel;
 }
 
 - (CGRect)infoLabelFrame
 {
-    CGFloat y = CGRectGetMaxY(self.titleLabel.frame);
+    //CGFloat y = CGRectGetMaxY(self.titleLabel.frame);
 
-    return CGRectMake(0.0f, y, FORMFieldValuesHeaderWidth, FORMLabelHeight * 1.1);
+    return CGRectMake(0,
+                      [self getHeightForTextView:self.field.title withWidth:self.frame.size.width] + 15,
+                      self.frame.size.width,
+                      [self getHeightForTextView:self.field.info withWidth:self.frame.size.width]);
 }
 
 - (UILabel *)infoLabel {
@@ -71,7 +72,7 @@
     CGFloat height = 0.0f;
     height += self.titleLabel.frame.origin.y * 2;
     height += [self getHeightForTextView:self.titleLabel.text withWidth:self.frame.size.width];
-    height += self.infoLabel.frame.size.height;
+    height += [self getHeightForTextView:self.infoLabel.text withWidth:self.frame.size.width];
 
     return height;
 }
@@ -86,7 +87,7 @@
     }
     else
     {
-        textToMeasure = @" ";
+        textToMeasure = @"";
     }
     
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-Medium" size:17.0]}];
@@ -132,14 +133,14 @@
     CGRect titleFrame = self.titleLabel.frame;
     titleFrame.size.width = width;
     self.titleLabel.frame = titleFrame;
-    //self.titleLabel.textAlignment = NSTextAlignmentCenter;
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
 
     [self.infoLabel sizeToFit];
     CGRect infoFrame = self.infoLabel.frame;
     infoFrame.origin.y = [self infoLabelFrame].origin.y;
     infoFrame.size.width = width;
     self.infoLabel.frame = infoFrame;
-    //self.infoLabel.textAlignment = NSTextAlignmentCenter;
+    self.infoLabel.textAlignment = NSTextAlignmentCenter;
 }
 
 @end

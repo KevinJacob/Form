@@ -60,6 +60,10 @@
 
 #pragma mark - Styling
 
+- (void)setCornerRadius:(CGFloat)cornerRadius {
+    self.layer.cornerRadius = cornerRadius;
+}
+
 - (void)setHeaderLabelFont:(UIFont *)headerLabelFont {
     self.headerLabel.font = headerLabelFont;
 }

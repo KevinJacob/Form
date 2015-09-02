@@ -91,6 +91,15 @@ static UIColor *invalidBorderColor;
 }
 
 
+
+-(void)prepareForReuse
+{
+    self.signatureImage.image = nil;
+    self.fileName = nil;
+    [self.signatureView clear];
+}
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #pragma mark - Signature Set/Get
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -352,6 +361,11 @@ static UIColor *invalidBorderColor;
 - (void)setInvalidBorderColor:(UIColor *)color
 {
     invalidBorderColor = color;
+}
+
+
+- (void)setCornerRadius:(CGFloat)cornerRadius {
+    self.contentView.layer.cornerRadius = cornerRadius;
 }
 
 

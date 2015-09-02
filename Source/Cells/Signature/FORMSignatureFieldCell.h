@@ -39,6 +39,7 @@ static NSString * const FORMSignatureFieldCellIdentifier = @"FORMSignatureFieldC
 - (void)setInvalidBackgroundColor:(UIColor *)backgroundColor UI_APPEARANCE_SELECTOR;
 - (void)setInvalidBorderColor:(UIColor *)borderColor UI_APPEARANCE_SELECTOR;
 
+- (void)setCornerRadius:(CGFloat)cornerRadius UI_APPEARANCE_SELECTOR;
 
 @end
 

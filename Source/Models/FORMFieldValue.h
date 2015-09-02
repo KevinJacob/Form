@@ -11,6 +11,7 @@
 @property (nonatomic) FORMFields *field;
 @property (nonatomic) NSString *value;
 @property (nonatomic) BOOL defaultValue;
+@property (nonatomic) BOOL selected;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary NS_DESIGNATED_INITIALIZER;
 

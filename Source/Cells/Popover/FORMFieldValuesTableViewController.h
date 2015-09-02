@@ -23,6 +23,8 @@ static const CGFloat FORMFieldValuesCellHeight = 44.0f;
 @property (nonatomic, weak) UIButton            *clearButton;
 @property (nonatomic, weak) UIButton            *selectButton;
 
+@property (nonatomic, assign) BOOL                dismissedbyButton;
+
 @property (nonatomic, weak) id <FORMFieldValuesTableViewControllerDelegate> delegate;
 
 @end

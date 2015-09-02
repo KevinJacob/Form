@@ -190,7 +190,7 @@
 - (UIImage *)_drawLineFromPoint:(CGPoint)fromPoint
                         toPoint:(CGPoint)toPoint image:(UIImage *)image {
     
-    CGSize screenSize = self.frame.size;
+    CGSize screenSize = CGSizeMake(roundf(self.frame.size.width), roundf(self.frame.size.height));
     if (&UIGraphicsBeginImageContextWithOptions != NULL) {
         UIGraphicsBeginImageContextWithOptions(screenSize, NO, 0.0);
     } else {
@@ -218,7 +218,7 @@
 
 - (UIImage *)_drawLineWithPoints:(NSArray *)points image:(UIImage *)image {
     
-    CGSize screenSize = self.frame.size;
+    CGSize screenSize = CGSizeMake(roundf(self.frame.size.width), roundf(self.frame.size.height));
     
     if (&UIGraphicsBeginImageContextWithOptions != NULL) {
         UIGraphicsBeginImageContextWithOptions(screenSize, NO, 0.0);

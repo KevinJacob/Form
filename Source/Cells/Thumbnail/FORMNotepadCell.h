@@ -14,6 +14,5 @@ static NSString * const FORMNotepadCellIdentifier = @"FORMNotepadCellIdentifier"
 
 @interface FORMNotepadCell : FORMThumbnailViewCell
 
-@property (nonatomic, strong) Notepad                               *notepad;
 
 @end

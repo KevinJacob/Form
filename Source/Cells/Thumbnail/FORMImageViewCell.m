@@ -37,6 +37,16 @@
 }
 
 
+
+-(void)prepareForReuse
+{
+    self.thumbnailImageView.contentMode = UIViewContentModeCenter;
+    self.thumbnailImageView.image = [UIImage imageNamed:kDefaultPhotoImage];
+    self.imageAdded = NO;
+    self.formfield = nil;
+}
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #pragma mark - Signature Set/Get
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -45,19 +55,21 @@
 {
     self.thumbnailImageView.contentMode = UIViewContentModeScaleAspectFit;
     self.imageAdded = YES;
-    NSString *photoImageFilePath = [self.photo pathForPhotoImage];
+    NSString *photoImageFilePath = [self.field.photo pathForPhotoImage];
     
-    if (!self.photo.chunkHeader)
+    if (!self.field.photo.chunkHeader)
     {
-        [[CoreDataHelper sharedInstance] findChunkHeader:self.photo];
+        [[CoreDataHelper sharedInstance] findChunkHeader:self.field.photo];
     }
     
-    NSString *tempImageFilePath = [[ChunkManager sharedInstance] readChunkData:photoImageFilePath chunkHeader:self.photo.chunkHeader];
+    NSString *tempImageFilePath = [[ChunkManager sharedInstance] readChunkData:photoImageFilePath chunkHeader:self.field.photo.chunkHeader];
     UIImage *image = [UIImage imageScaleAndImmediateLoadWithContentsOfFile:tempImageFilePath];
     if (image)
     {
         self.thumbnailImageView.image = image;
     }
+    
+    [SVProgressHUD dismiss];
 }
 
 
@@ -80,14 +92,18 @@
     self.hidden                                     = (field.sectionSeparator);
     self.alpha                                      = field.disabled ? 0.5f : 1.0f;
     self.thumbnailImageView.userInteractionEnabled  = field.disabled ? NO : YES;
+    self.thumbnailImageView.image = self.thumbnailImageView.image;
     
-    if(self.formfield.photos)
+    // Needs to check this property first in case of updates from cloud
+    if(self.formfield.photos.count > 0)
     {
-        self.photo = self.formfield.photos;
-        if(!self.photo.isComplete)
+        [SVProgressHUD showWithStatus:@"Downloading Photo..."];
+        
+        self.field.photo = [[self.formfield.photos allObjects] firstObject];
+        if(!self.field.photo.isComplete)
         {
             SDCThriftGCDManager *GCDManager = [SDCThriftGCDManager sharedInstance];
-            [GCDManager getPhotoDataChunks:self.photo
+            [GCDManager getPhotoDataChunks:self.field.photo
                                 forNotepad:NO
                               successBlock:^{
                                   [self setImage];
@@ -99,6 +115,10 @@
         {
             [self setImage];
         }
+    }
+    else if (self.field.photo)
+    {
+        [self setImage];
     }
 }
 

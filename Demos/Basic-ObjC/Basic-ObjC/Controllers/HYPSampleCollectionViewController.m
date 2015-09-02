@@ -128,7 +128,7 @@ static const CGFloat FORMSignatureFieldMargin = 5.0f;
     FORMTarget *target;
     target = [FORMTarget showFieldTargetWithID:@"signature"];
     [self.dataSource processTargets:@[target]];
-    //[self configureToolbar];
+    //[self ];
 }
 
 - (void)configureToolbar {

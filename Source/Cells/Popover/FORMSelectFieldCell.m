@@ -9,7 +9,7 @@ static const CGFloat FORMTextViewMargin = 10.0f;
 
 static const CGFloat FORMTextViewInsideMargin = 12.0f;
 
-@interface FORMSelectFieldCell () <FORMTextFieldDelegate, FORMFieldValuesTableViewControllerDelegate, FORMTextViewDelegate, UIPopoverPresentationControllerDelegate>
+@interface FORMSelectFieldCell () <FORMTextFieldDelegate, FORMFieldValuesTableViewControllerDelegate, FORMTextViewDelegate, UIPopoverPresentationControllerDelegate, UIPopoverControllerDelegate>
 
 @end
 
@@ -115,6 +115,11 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 - (void)updateContentViewController:(UIViewController *)contentViewController
                           withField:(FORMFields *)field {
     self.fieldValuesController.field = self.field;
+    self.fieldValuesController.fieldValue = [self fieldWithValue:self.field.value];
+    if(self.fieldValuesController.fieldValue)
+    {
+        self.fieldValuesController.fieldValue.selected = YES;
+    }
     
     if (self.field.values.count <= FORMSelectMaxItemCount) {
         CGSize currentSize = [self popoverSize];
@@ -133,11 +138,25 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     }
 }
 
+
+-(FORMFieldValue *)fieldWithValue:(NSString *)value
+{
+    for(FORMFieldValue *field in self.field.values)
+    {
+        if([field.title isEqualToString:value])
+        {
+            return field;
+        }
+    }
+    return nil;
+}
+
 #pragma mark - FORMFieldValuesTableViewControllerDelegate
 
 - (void)fieldValuesTableViewController:(FORMFieldValuesTableViewController *)fieldValuesTableViewController
                       didSelectedValue:(FORMFieldValue *)selectedValue {
-    self.field.value = selectedValue;
+    self.field.value = selectedValue.value;
+    self.field.valueID = selectedValue.valueID;
 
     CGFloat initalHeight = self.valueView.frame.size.height;
     self.valueView.frame = [self textViewFrameWithText:selectedValue.title];
@@ -202,6 +221,7 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     {
         self.popoverController = [[UIPopoverController alloc] initWithContentViewController:self.fieldValuesController];
         [self.popoverController setPopoverContentSize:self.fieldValuesController.tableView.contentSize animated:YES];
+        self.popoverController.delegate = self;
         
         if (!self.popoverController.isPopoverVisible) {
             [self.popoverController presentPopoverFromRect:self.bounds
@@ -234,6 +254,11 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 }
 
 -(void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing *)view
+{
+    [self updateContentViewController:self.fieldValuesController withField:self.field];
+}
+
+-(void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing *)view
 {
     [self updateContentViewController:self.fieldValuesController withField:self.field];
 }

@@ -23,8 +23,14 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 - (FORMFieldValuesTableViewHeader *)headerView {
 	if (_headerView) return _headerView;
 
-    _headerView = [self.tableView dequeueReusableHeaderFooterViewWithIdentifier:FORMFieldValuesTableViewHeaderIdentifier];
-
+    _headerView = [[FORMFieldValuesTableViewHeader alloc] initWithFrame:self.tableView.frame];
+    _headerView.field = self.field;
+    _headerView.backgroundView = ({
+        UIView * view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, [_headerView labelHeight])];
+        view.backgroundColor = [UIColor colorFromHex:@"1A242F"];
+        view;
+    });
+    
 	return _headerView;
 }
 
@@ -42,14 +48,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    //self.tableView.bounces = NO;
-    
-    if(!self.fieldValue)
-    {
-        FORMFieldValue *fieldValue = [[FORMFieldValue alloc] init];
-        fieldValue.value = @"";
-        self.fieldValue = fieldValue;
-    }
+    self.tableView.bounces = NO;
     
     self.clearsSelectionOnViewWillAppear = NO;
 
@@ -58,6 +57,22 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
     [self.tableView registerClass:[FORMFieldValueCell class] forCellReuseIdentifier:FORMFieldValueCellIdentifer];
     [self.tableView registerClass:[FORMFieldValuesTableViewHeader class] forHeaderFooterViewReuseIdentifier:FORMFieldValuesTableViewHeaderIdentifier];
 }
+
+
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    if(!self.fieldValue)
+    {
+        FORMFieldValue *fieldValue = [[FORMFieldValue alloc] init];
+        fieldValue.value = @"";
+        self.fieldValue = fieldValue;
+    }
+    
+    [self.tableView reloadData];
+}
+
+
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -69,24 +84,30 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 }
 
 
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    if(!self.dismissedbyButton)
+    {
+        [self cancelValue];
+    }
+}
+
+
 #pragma mark - TableViewDelegate
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    self.headerView.field = self.field;
-    
     return self.headerView;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    NSInteger headerHeight;
-    if (self.customHeight > 0.0f) {
-        headerHeight = self.customHeight;
-    } else {
-        [self.headerView setField:self.field];
-        headerHeight = [self.headerView labelHeight];
-    }
 
-    return headerHeight;
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    [self.headerView setField:self.field];
+    
+    return ([self getHeightForTextView:self.field.title withWidth:self.tableView.frame.size.width] +
+            [self getHeightForTextView:self.field.info withWidth:self.tableView.frame.size.width] +
+            (FORMFieldValueMargin * 2));
 }
 
 
@@ -141,14 +162,17 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     FORMFieldValue *fieldValue = self.values[indexPath.row];
-    cell.fieldValue = fieldValue;
-
-    if ([self.field.value isKindOfClass:[FORMFieldValue class]]) {
-
-        [tableView selectRowAtIndexPath:indexPath
-                               animated:NO
-                         scrollPosition:UITableViewScrollPositionNone];
+    if([fieldValue.valueID isEqualToString:self.field.valueID])
+    {
+        self.selectedCell = cell;
+        fieldValue.selected = YES;
+        self.selectedCell.clearButton.frame = CGRectMake(self.tableView.frame.size.width - 40, 7, 30, 30);
     }
+    else
+    {
+        fieldValue.selected = NO;
+    }
+    cell.fieldValue = fieldValue;
 
     return cell;
 }
@@ -158,6 +182,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
     if(self.selectedCell)
     {
         self.selectedCell.clearButton.hidden = YES;
+        self.fieldValue.selected = NO;
         
         if(self.selectedCell != (FORMFieldValueCell *)[self.tableView cellForRowAtIndexPath:indexPath])
         {
@@ -166,6 +191,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
             self.selectedCell.clearButton.hidden = NO;
             
             self.fieldValue = self.values[indexPath.row];
+            self.fieldValue.selected = YES;
         }
         else
         {
@@ -183,6 +209,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
         self.selectedCell.clearButton.hidden = NO;
         
         self.fieldValue = self.values[indexPath.row];
+        self.fieldValue.selected = YES;
         
     }
 }
@@ -192,7 +219,9 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 {
     FORMFieldValue *fieldValue = self.values[indexPath.row];
     
-    return ([self getHeightForTextView:fieldValue.title withWidth:self.tableView.frame.size.width] + (FORMFieldValueMargin * 2));
+    return ([self getHeightForTextView:fieldValue.title withWidth:self.tableView.frame.size.width] +
+            [self getHeightForTextView:fieldValue.info withWidth:self.tableView.frame.size.width] +
+            (FORMFieldValueMargin * 2));
     
 }
 
@@ -209,7 +238,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
     }
     else
     {
-        textToMeasure = @" ";
+        return 0;
     }
     
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-Medium" size:17.0]}];
@@ -222,22 +251,32 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 }
 
 
+
+-(FORMFieldValue *)fieldWithValue:(NSString *)value
+{
+    for(FORMFieldValue *field in self.field.values)
+    {
+        if([field.title isEqualToString:value])
+        {
+            return field;
+        }
+    }
+    return nil;
+}
+
+
 #pragma mark - Actions
 
 
 -(void)cancelValue
 {
-    if(self.selectedCell)
+    self.fieldValue.selected = NO;
+    if(self.field.value)
     {
-        self.selectedCell.clearButton.hidden = YES;
+        FORMFieldValue *fieldValue = [self fieldWithValue:self.field.value];
+        fieldValue.selected = YES;
     }
-    
-    if(self.fieldValue)
-    {
-        FORMFieldValue *fieldValue = [[FORMFieldValue alloc] init];
-        fieldValue.value = @"";
-        self.fieldValue = fieldValue;
-    }
+    self.dismissedbyButton = YES;
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -248,6 +287,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
     if(self.selectedCell)
     {
         self.selectedCell.clearButton.hidden = YES;
+        self.fieldValue.selected = NO;
     }
     
     FORMFieldValue *fieldValue = [[FORMFieldValue alloc] init];
@@ -262,6 +302,8 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
         [self.delegate fieldValuesTableViewController:self
                                      didSelectedValue:self.fieldValue];
     }
+    self.dismissedbyButton = YES;
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

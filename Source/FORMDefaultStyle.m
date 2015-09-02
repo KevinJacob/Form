@@ -22,9 +22,11 @@
 + (void)applyStyle {
     [[FORMTextField appearance] setTextColor:[UIColor redColor]];
     [[FORMTextField appearance] setBackgroundColor:[UIColor yellowColor]];
+    [[FORMTextField appearance] setCornerRadius:kFormsCornerRadius];
 
     [[FORMBaseFieldCell appearance] setHeadingLabelFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]];
     [[FORMBaseFieldCell appearance] setHeadingLabelTextColor:[UIColor blackColor]];
+    [[FORMTextField appearance] setCornerRadius:kFormsCornerRadius];
 
     [[FORMBackgroundView appearance] setBackgroundColor:[UIColor clearColor]];
 
@@ -33,7 +35,7 @@
     [[FORMButtonFieldCell appearance] setBackgroundColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMButtonFieldCell appearance] setTitleLabelFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:16.0]];
     [[FORMButtonFieldCell appearance] setBorderWidth:1.0f];
-    [[FORMButtonFieldCell appearance] setCornerRadius:5.0f];
+    [[FORMButtonFieldCell appearance] setCornerRadius:kFormsCornerRadius];
     [[FORMButtonFieldCell appearance] setHighlightedTitleColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMButtonFieldCell appearance] setBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMButtonFieldCell appearance] setHighlightedBackgroundColor:[UIColor whiteColor]];
@@ -53,7 +55,7 @@
     [[FORMTextField appearance] setTintColor:[UIColor blackColor]];
     [[FORMTextField appearance] setBorderWidth:1.0f];
     [[FORMTextField appearance] setBorderColor:[UIColor colorFromHex:@"1A242F"]];
-    [[FORMTextField appearance] setCornerRadius:5.0f];
+    [[FORMTextField appearance] setCornerRadius:kFormsCornerRadius];
     [[FORMTextField appearance] setActiveBackgroundColor:[UIColor whiteColor]];
     [[FORMTextField appearance] setActiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMTextField appearance] setInactiveBackgroundColor:[UIColor whiteColor]];
@@ -74,7 +76,7 @@
     [[FORMTextView appearance] setTintColor:[UIColor blackColor]];
     [[FORMTextView appearance] setBorderWidth:1.0f];
     [[FORMTextView appearance] setBorderColor:[UIColor colorFromHex:@"1A242F"]];
-    [[FORMTextView appearance] setCornerRadius:5.0f];
+    [[FORMTextView appearance] setCornerRadius:kFormsCornerRadius];
     [[FORMTextView appearance] setActiveBackgroundColor:[UIColor whiteColor]];
     [[FORMTextView appearance] setActiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMTextView appearance] setInactiveBackgroundColor:[UIColor whiteColor]];
@@ -102,7 +104,8 @@
     [[FORMSignatureFieldCell appearance] setValidBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMSignatureFieldCell appearance] setInvalidBackgroundColor:[UIColor colorFromHex:@"FFD7D7"]];
     [[FORMSignatureFieldCell appearance] setInvalidBorderColor:[UIColor colorFromHex:@"EC3031"]];
-    
+    [[FORMSignatureFieldCell appearance] setCornerRadius:kFormsCornerRadius];
+
     [[FORMThumbnailViewCell appearance] setActiveBackgroundColor:[UIColor colorFromHex:@"E1F5FF"]];
     [[FORMThumbnailViewCell appearance] setActiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMThumbnailViewCell appearance] setInactiveBackgroundColor:[UIColor whiteColor]];
@@ -120,7 +123,7 @@
     [[FORMFieldValueLabel appearance] setTextColor:[UIColor blackColor]];
     [[FORMFieldValueLabel appearance] setBorderWidth:1.0f];
     [[FORMFieldValueLabel appearance] setBorderColor:[UIColor colorFromHex:@"1A242F"]];
-    [[FORMFieldValueLabel appearance] setCornerRadius:5.0f];
+    [[FORMFieldValueLabel appearance] setCornerRadius:kFormsCornerRadius];
     [[FORMFieldValueLabel appearance] setActiveBackgroundColor:[UIColor colorFromHex:@"E5F4F5"]];
     [[FORMFieldValueLabel appearance] setActiveBorderColor:[UIColor colorFromHex:@"1A242F"]];
     [[FORMFieldValueLabel appearance] setInactiveBackgroundColor:[UIColor whiteColor]];
@@ -139,6 +142,7 @@
     [[FORMGroupHeaderView appearance] setHeaderLabelFont:[UIFont fontWithName:@"AvenirNext-Medium" size:17.0]];
     [[FORMGroupHeaderView appearance] setHeaderLabelTextColor:[UIColor whiteColor]];
     [[FORMGroupHeaderView appearance] setHeaderBackgroundColor:[UIColor colorFromHex:@"1A242F"]];
+    [[FORMGroupHeaderView appearance] setCornerRadius:kFormsCornerRadius];
 
     [[FORMFieldValuesTableViewHeader appearance] setTitleLabelFont:[UIFont fontWithName:@"AvenirNext-Medium" size:17.0]];
     [[FORMFieldValuesTableViewHeader appearance] setTitleLabelTextColor:[UIColor whiteColor]];

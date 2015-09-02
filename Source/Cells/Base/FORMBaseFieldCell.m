@@ -4,7 +4,7 @@
 
 static NSString * const FORMHideTooltips = @"FORMHideTooltips";
 static const CGFloat FORMTextFormFieldCellLabelMarginTop = 10.0f;
-static const CGFloat FORMTextFormFieldCellLabelHeight = 20.0f;
+//static const CGFloat FORMTextFormFieldCellLabelHeight = 20.0f;
 static const CGFloat FORMTextFormFieldCellLabelMarginX = 5.0f;
 
 @interface FORMBaseFieldCell ()
@@ -103,6 +103,11 @@ static const CGFloat FORMTextFormFieldCellLabelMarginX = 5.0f;
     CGFloat marginTop = FORMTextFormFieldCellLabelMarginTop;
 
     CGFloat width = CGRectGetWidth(self.frame) - (marginX * 2);
+    if(self.field.type == FORMFieldTypeSwitch)
+    {
+        width = width - 75;
+    }
+    
     CGFloat height = [self getHeightForText:self.headingLabel.text withWidth:width];
     CGRect frame = CGRectMake(marginX, marginTop, width, height);
 

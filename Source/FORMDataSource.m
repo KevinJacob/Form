@@ -15,6 +15,7 @@
 #import "FORMButtonFieldCell.h"
 #import "FORMSignatureFieldCell.h"
 #import "FORMCheckboxFieldCell.h"
+#import "FORMSwitchFieldCell.h"
 #import "FORMLabelFieldCell.h"
 #import "FORMFieldValue.h"
 #import "HYPParsedRelationship.h"
@@ -101,6 +102,9 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
     
     [collectionView registerClass:[FORMCheckboxFieldCell class]
        forCellWithReuseIdentifier:FORMCheckboxFieldCellIdentifier];
+    
+    [collectionView registerClass:[FORMSwitchFieldCell class]
+       forCellWithReuseIdentifier:FORMSwitchFieldCellIdentifier];
     
     [collectionView registerClass:[FORMTextViewCell class]
        forCellWithReuseIdentifier:FORMTextViewCellIdentifier];
@@ -221,6 +225,10 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             identifier = FORMCheckboxFieldCellIdentifier;
             break;
         
+        case FORMFieldTypeSwitch:
+            identifier = FORMSwitchFieldCellIdentifier;
+            break;
+            
         case FORMFieldTypeLabel:
             identifier = FORMLabelFieldCellIdentifier;
             break;
@@ -241,13 +249,6 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             break;
         
         case FORMFieldTypeCustom: abort();
-    }
-
-    FormField *fieldChosen;
-    if(self.formFields.count > 0 && field.sectionSeparator == NO)
-    {
-        fieldChosen = [self.formFields firstObject];
-        [self.formFields removeObjectAtIndex:0];
     }
     
     
@@ -273,8 +274,17 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         FORMThumbnailViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
                                                                                  forIndexPath:indexPath];
         
+        
+        for(FormField *fieldChosen in self.formFields)
+        {
+            if(([fieldChosen.sequence integerValue] + 1) == [field.fieldID integerValue])
+            {
+                cell.formfield = fieldChosen;
+            }
+        }
+        
         cell.delegate = self;
-        cell.formfield = fieldChosen;
+        
         [self fieldCell:cell updatedWithField:field];
         
         if (self.configureCellBlock) {
@@ -437,14 +447,19 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         
         if(field.title.length > 0)
         {
-            height = height + [self getHeightForText:field.title withWidth:(width - 30)];
+            height = height + [self getHeightForText:field.title withWidth:(width - 30) withFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]];
+        }
+        
+        if(field.type == FORMFieldTypeSwitch)
+        {
+            height = height + [self getHeightForText:field.info withWidth:(width - 30) withFont:[UIFont fontWithName:@"AvenirNext-Regular" size:12.0]];
         }
     }
 
     return CGSizeMake(width, height);
 }
 
-- (CGFloat)getHeightForText:(NSString *)myText withWidth:(CGFloat)width
+- (CGFloat)getHeightForText:(NSString *)myText withWidth:(CGFloat)width withFont:(UIFont *)font
 {
     NSString *textToMeasure;
     
@@ -457,7 +472,7 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         textToMeasure = @" ";
     }
     
-    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]}];
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:font}];
     CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(width*0.95, CGFLOAT_MAX)
                                                options:NSStringDrawingUsesLineFragmentOrigin
                                                context:nil];
