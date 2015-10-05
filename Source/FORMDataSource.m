@@ -1,7 +1,7 @@
 #import "FORMDataSource.h"
 
 #import "FORMViewController.h"
-#import "SceneDocFormViewContoller.h"
+#import "SDocFormViewController.h"
 #import "FORMBackgroundView.h"
 #import "FORMLayout.h"
 
@@ -20,7 +20,7 @@
 #import "FORMFieldValue.h"
 #import "HYPParsedRelationship.h"
 
-@import Hex;
+#import "UIColor+Hex.h"
 #import "NSString+HYPWordExtractor.h"
 #import "NSString+HYPFormula.h"
 #import "UIDevice+HYPRealOrientation.h"
@@ -198,15 +198,11 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         case FORMFieldTypeDate:
         case FORMFieldTypeDateTime:
         case FORMFieldTypeTime:
-            identifier = [NSString stringWithFormat:@"%@-%@", FORMDateFormFieldCellIdentifier, field.fieldID];
-            [collectionView registerClass:[FORMDateFieldCell class]
-               forCellWithReuseIdentifier:identifier];
+            identifier = FORMDateFormFieldCellIdentifier;
             break;
         
         case FORMFieldTypeSelect:
-            identifier = [NSString stringWithFormat:@"%@-%@", FORMSelectFormFieldCellIdentifier, field.fieldID];
-            [collectionView registerClass:[FORMSelectFieldCell class]
-               forCellWithReuseIdentifier:identifier];
+            identifier = FORMSelectFormFieldCellIdentifier;
             break;
         
         case FORMFieldTypeSpacer:
@@ -244,22 +240,16 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         case FORMFieldTypeText:
         case FORMFieldTypeFloat:
         case FORMFieldTypeNumber:
-            identifier = [NSString stringWithFormat:@"%@-%@", FORMTextFieldCellIdentifier, field.fieldID];
-            [collectionView registerClass:[FORMTextFieldCell class]
-               forCellWithReuseIdentifier:identifier];
+            identifier = FORMTextFieldCellIdentifier;
 
-            break;
-
-        case FORMFieldTypeCount:
-            identifier = [NSString stringWithFormat:@"%@-%@", FORMCountFieldCellIdentifier, field.fieldID];
-            [collectionView registerClass:[FORMTextFieldCell class]
-               forCellWithReuseIdentifier:identifier];
             break;
         
+        case FORMFieldTypeCount:
+            identifier = FORMCountFieldCellIdentifier;
+            break;
+            
         case FORMFieldTypeButton:
-            identifier = [NSString stringWithFormat:@"%@-%@", FORMButtonFieldCellIdentifier, field.fieldID];
-            [collectionView registerClass:[FORMButtonFieldCell class]
-               forCellWithReuseIdentifier:identifier];
+            identifier = FORMButtonFieldCellIdentifier;
             break;
         
         case FORMFieldTypeCustom: abort();
@@ -280,6 +270,8 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         } else {
             cell.field = field;
         }
+        
+        [cell validate];
         
         return cell;
     }
@@ -307,6 +299,8 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             cell.field = field;
         }
         
+        [cell validate];
+        
         return cell;
     }
     else if([identifier isEqualToString:FORMSelectFormFieldCellIdentifier] || [identifier isEqualToString:FORMDateFormFieldCellIdentifier])
@@ -324,6 +318,46 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             cell.field = field;
         }
         
+        [cell validate];
+        
+        return cell;
+    }
+    else if([identifier isEqualToString:FORMTextFieldCellIdentifier])
+    {
+        FORMTextFieldCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
+                                                                            forIndexPath:indexPath];
+        
+        cell.delegate = self;
+        cell.formTextFieldCellDelegate = (FORMViewController *)self.viewController;
+        [self fieldCell:cell updatedWithField:field];
+        
+        if (self.configureCellBlock) {
+            self.configureCellBlock(cell, indexPath, field);
+        } else {
+            cell.field = field;
+        }
+        
+        [cell validate];
+        
+        return cell;
+    }
+    else if([identifier isEqualToString:FORMTextViewCellIdentifier])
+    {
+        FORMTextViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
+                                                                            forIndexPath:indexPath];
+        
+        cell.delegate = self;
+        cell.formTextViewCellDelegate = (FORMViewController *)self.viewController;
+        [self fieldCell:cell updatedWithField:field];
+        
+        if (self.configureCellBlock) {
+            self.configureCellBlock(cell, indexPath, field);
+        } else {
+            cell.field = field;
+        }
+        
+        [cell validate];
+        
         return cell;
     }
     else
@@ -338,6 +372,8 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
         } else {
             cell.field = field;
         }
+        
+        [cell validate];
         
         return cell;
     }
@@ -467,14 +503,14 @@ static const CGFloat FORMKeyboardAnimationDuration = 0.3f;
             height = field.size.height * FORMFieldCellItemHeight;
         }
         
-        if(field.title.length > 0)
-        {
-            height = height + [self getHeightForText:field.title withWidth:(width - 30) withFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]];
-        }
-        
         if(field.type == FORMFieldTypeSwitch)
         {
-            height = height + [self getHeightForText:field.info withWidth:(width - 30) withFont:[UIFont fontWithName:@"AvenirNext-Regular" size:12.0]];
+            height = height + [self getHeightForText:field.title withWidth:(width - 90) withFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]];
+            height = height + [self getHeightForText:field.info withWidth:(width - 90) withFont:[UIFont fontWithName:@"AvenirNext-Regular" size:12.0]] + 10;
+        }
+        else if(field.title.length > 0)
+        {
+            height = height + [self getHeightForText:field.title withWidth:(width - 30) withFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]];
         }
     }
 

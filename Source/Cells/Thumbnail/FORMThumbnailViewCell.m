@@ -87,6 +87,8 @@ static UIColor *invalidBorderColor;
                                                self.frame.size.height - 195 - FORMThumbFieldTopMargin,
                                                inchPercentageofWidth * 1,
                                                195);
+    
+    [self validate];
 }
 
 

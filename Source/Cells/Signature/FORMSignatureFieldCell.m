@@ -88,6 +88,8 @@ static UIColor *invalidBorderColor;
                                            self.frame.size.height - 195 - FORMSignatureFieldTopMargin,
                                            self.frame.size.width - (FORMSignatureFieldMargin * 2),
                                            195);
+    
+    [self validate];
 }
 
 
@@ -181,7 +183,7 @@ static UIColor *invalidBorderColor;
         [self.signatureView clear];
     }
     
-    [self.sigDelegate signatureViewClosed];
+    [self.sigDelegate signatureViewClosedAndSigned:save];
     [self.signatureView removeFromSuperview];
 }
 
@@ -192,7 +194,7 @@ static UIColor *invalidBorderColor;
 
 - (void)updateFieldWithDisabled:(BOOL)disabled
 {
-    self.alpha                                  = disabled ? 0.5f : 1.0f;
+    self.signatureImage.alpha                   = disabled ? 0.5f : 1.0f;
     self.signatureImage.userInteractionEnabled  = disabled ? NO : YES;
 }
 
@@ -203,7 +205,7 @@ static UIColor *invalidBorderColor;
     [super updateWithField:field];
     
     self.hidden                                 = (field.sectionSeparator);
-    self.alpha                                  = field.disabled ? 0.5f : 1.0f;
+    self.signatureImage.alpha                   = field.disabled ? 0.5f : 1.0f;
     self.signatureImage.userInteractionEnabled  = field.disabled ? NO : YES;
     
     if(field.value)

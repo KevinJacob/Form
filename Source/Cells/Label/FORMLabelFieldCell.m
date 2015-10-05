@@ -31,7 +31,6 @@
 
 - (void)updateFieldWithDisabled:(BOOL)disabled
 {
-    self.alpha                                  = disabled ? 0.5f : 1.0f;
 }
 
 
@@ -41,7 +40,6 @@
     [super updateWithField:field];
     
     self.hidden                                 = (field.sectionSeparator);
-    self.alpha                                  = field.disabled ? 0.5f : 1.0f;
 }
 
 

@@ -91,7 +91,7 @@ static const CGFloat FORMCheckboxFieldMargin = 10.0f;
 
 - (void)updateFieldWithDisabled:(BOOL)disabled
 {
-    self.alpha                                  = disabled ? 0.5f : 1.0f;
+    self.check.alpha                            = disabled ? 0.5f : 1.0f;
     self.check.userInteractionEnabled           = disabled ? NO : YES;
 }
 
@@ -102,7 +102,7 @@ static const CGFloat FORMCheckboxFieldMargin = 10.0f;
     [super updateWithField:field];
     
     self.hidden                                 = (field.sectionSeparator);
-    self.alpha                                  = field.disabled ? 0.5f : 1.0f;
+    self.check.alpha                            = field.disabled ? 0.5f : 1.0f;
     self.check.userInteractionEnabled           = field.disabled ? NO : YES;
     
     if([field.value isEqualToString:@"Y"])

@@ -3,8 +3,10 @@
 #import "FORMDataSource.h"
 #import "FORMSignatureFieldCell.h"
 #import "FORMSelectFieldCell.h"
+#import "FORMTextFieldCell.h"
+#import "FORMTextViewCell.h"
 
-@interface FORMViewController : UICollectionViewController <SignatureFieldDelegate, DropdownDelegate>
+@interface FORMViewController : UICollectionViewController <SignatureFieldDelegate, DropdownDelegate, FORMTextFieldCellDelegate, FORMTextViewCellDelegate>
 
 @property (nonatomic, readonly) FORMDataSource *dataSource;
 @property (nonatomic, copy) id JSON;

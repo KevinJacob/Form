@@ -3,8 +3,7 @@
 #import "FORMTextFieldCell.h"
 
 #import "FORMTextFieldTypeManager.h"
-
-@import Hex;
+#import "UIColor+Hex.h"
 
 static const CGFloat FORMTextFieldClearButtonWidth = 30.0f;
 static const CGFloat FORMTextFieldClearButtonHeight = 20.0f;
@@ -94,9 +93,7 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
     [self createCountButtons];
 
     UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [clearButton setImage:[UIImage imageNamed:@"forms_clear"
-                                     inBundle:bundle
-                compatibleWithTraitCollection:trait] forState:UIControlStateNormal];
+    [clearButton setImage:[UIImage imageNamed:@"forms_clear"] forState:UIControlStateNormal];
     [clearButton addTarget:self action:@selector(clearButtonAction) forControlEvents:UIControlEventTouchUpInside];
     clearButton.frame = CGRectMake(0.0f, 0.0f, FORMTextFieldClearButtonWidth, FORMTextFieldClearButtonHeight);
     self.rightView = clearButton;
@@ -263,16 +260,23 @@ static NSString * const FORMTextFieldPlusButtonColorKey = @"plus_button_color";
     }
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if (!string || [string isEqualToString:@"\n"]) return YES;
-
-    BOOL validator = (self.inputValidator &&
-                      [self.inputValidator respondsToSelector:@selector(validateReplacementString:withText:withRange:)]);
-
-    if (validator) return [self.inputValidator validateReplacementString:string
-                                                                withText:self.rawText withRange:range];
-
-    return YES;
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if(self.maxLength)
+    {
+        if((textField.text.length + string.length) > [self.maxLength integerValue])
+        {
+            return NO;
+        }
+        else
+        {
+            return YES;
+        }
+    }
+    else
+    {
+        return YES;
+    }
 }
 
 #pragma mark - UIResponder Overwritables

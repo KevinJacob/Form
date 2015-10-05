@@ -69,6 +69,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
         self.fieldValue = fieldValue;
     }
     
+    self.dropdownExposed = YES;
     [self.tableView reloadData];
 }
 
@@ -87,6 +88,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    self.dropdownExposed = NO;
     if(!self.dismissedbyButton)
     {
         [self cancelValue];
@@ -166,7 +168,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
     {
         self.selectedCell = cell;
         fieldValue.selected = YES;
-        self.selectedCell.clearButton.frame = CGRectMake(self.tableView.frame.size.width - 40, 7, 30, 30);
+        self.selectedCell.selectedButton.frame = CGRectMake(self.tableView.frame.size.width - 40, 7, 30, 30);
     }
     else
     {
@@ -181,14 +183,14 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 {
     if(self.selectedCell)
     {
-        self.selectedCell.clearButton.hidden = YES;
+        self.selectedCell.selectedButton.hidden = YES;
         self.fieldValue.selected = NO;
         
         if(self.selectedCell != (FORMFieldValueCell *)[self.tableView cellForRowAtIndexPath:indexPath])
         {
             self.selectedCell = (FORMFieldValueCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-            self.selectedCell.clearButton.frame = CGRectMake(self.tableView.frame.size.width - 40, 7, 30, 30);
-            self.selectedCell.clearButton.hidden = NO;
+            self.selectedCell.selectedButton.frame = CGRectMake(self.tableView.frame.size.width - 40, 7, 30, 30);
+            self.selectedCell.selectedButton.hidden = NO;
             
             self.fieldValue = self.values[indexPath.row];
             self.fieldValue.selected = YES;
@@ -205,8 +207,8 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
     else
     {
         self.selectedCell = (FORMFieldValueCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-        self.selectedCell.clearButton.frame = CGRectMake(self.tableView.frame.size.width - 40, 7, 30, 30);
-        self.selectedCell.clearButton.hidden = NO;
+        self.selectedCell.selectedButton.frame = CGRectMake(self.tableView.frame.size.width - 40, 7, 30, 30);
+        self.selectedCell.selectedButton.hidden = NO;
         
         self.fieldValue = self.values[indexPath.row];
         self.fieldValue.selected = YES;
@@ -286,7 +288,7 @@ static const CGFloat FORMFieldValueMargin = 10.0f;
 {
     if(self.selectedCell)
     {
-        self.selectedCell.clearButton.hidden = YES;
+        self.selectedCell.selectedButton.hidden = YES;
         self.fieldValue.selected = NO;
     }
     

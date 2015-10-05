@@ -49,7 +49,7 @@
     self.minimumLineSpacing = 0.0f;
     self.minimumInteritemSpacing = 0.0f;
     self.headerReferenceSize = CGSizeMake(CGRectGetWidth(bounds), FORMHeaderHeight);
-
+    
     return self;
 }
 
@@ -197,12 +197,16 @@
         FORMGroup *group = [[self.dataSource groups] objectAtIndex:section];
         
         NSString *viewOfKind = [NSString stringWithFormat:@"%@-%@", FORMBackgroundKind, group.groupID];
-        FORMLayoutAttributes *layoutAttributes = (FORMLayoutAttributes *)[self layoutAttributesForDecorationViewOfKind:viewOfKind
+        
+        if(group)
+        {
+            FORMLayoutAttributes *layoutAttributes = (FORMLayoutAttributes *)[self layoutAttributesForDecorationViewOfKind:viewOfKind
                                                                 atIndexPath:indexPath];
 
-        layoutAttributes.styles = group.styles;
+            layoutAttributes.styles = group.styles;
 
-        [attributes addObject:layoutAttributes];
+            [attributes addObject:layoutAttributes];
+        }
     }
 
     return attributes;
@@ -220,7 +224,7 @@
             [self registerClass:[FORMBackgroundView class] forDecorationViewOfKind:viewOfKind];
         }
     } else {
-        return nil;
+        abort();
     }
 
     NSArray *collapsedGroups = nil;
@@ -228,7 +232,7 @@
     if ([self.dataSource respondsToSelector:@selector(collapsedGroups)]) {
         collapsedGroups = [self.dataSource collapsedGroups];
     } else {
-        return nil;
+        abort();
     }
 
     FORMGroup *group = groups[section];

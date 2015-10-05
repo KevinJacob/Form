@@ -1,14 +1,14 @@
 //
-//  FORMSwitchFieldCell.h
-//  SceneDoc
+// FORMSwitchFieldCell.h
+// SceneDoc
 //
-//  Created by Kevin Jacob on 2015-09-02.
-//  Copyright (c) 2015 SceneDoc Inc. All rights reserved.
+// Created by Kevin Jacob on 2015-09-02.
+// Copyright (c) 2015 SceneDoc Inc. All rights reserved.
 //
 
 #import "FORMBaseFieldCell.h"
 
-static NSString * const FORMSwitchFieldCellIdentifier = @"FORMSwitchFieldCellIdentifier";
+static NSString *const FORMSwitchFieldCellIdentifier = @"FORMSwitchFieldCellIdentifier";
 
 @interface FORMSwitchFieldCell : FORMBaseFieldCell
 

@@ -2,7 +2,7 @@
 
 #import "FORMSeparatorView.h"
 
-@import Hex;
+#import "UIColor+Hex.h"
 
 static NSString * const FORMHideTooltips = @"FORMHideTooltips";
 static const CGFloat FORMTextFormFieldCellLabelMarginTop = 10.0f;
@@ -81,6 +81,7 @@ static NSString * const FORMHeadingLabelTextColorKey = @"heading_label_text_colo
     self.headingLabel.text = field.title;
     self.headingLabel.frame = [self headingLabelFrame];
 
+    
     if (field.sectionSeparator) {
         self.separatorView.styles = field.styles;
     }
@@ -104,7 +105,6 @@ static NSString * const FORMHeadingLabelTextColorKey = @"heading_label_text_colo
     [super layoutSubviews];
 
     self.headingLabel.frame = [self headingLabelFrame];
-
     self.separatorView.frame = [self separatorViewFrame];
 }
 
@@ -118,17 +118,19 @@ static NSString * const FORMHeadingLabelTextColorKey = @"heading_label_text_colo
         width = width - 75;
     }
     
-    CGFloat height = [self getHeightForText:self.headingLabel.text withWidth:width];
+    CGFloat height = [self getHeightForText:self.headingLabel.text withWidth:width withFont:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]];
     CGRect frame = CGRectMake(marginX, marginTop, width, height);
 
     return frame;
 }
 
-- (CGFloat)getHeightForText:(NSString *)myText withWidth:(CGFloat)width
+
+
+- (CGFloat)getHeightForText:(NSString *)myText withWidth:(CGFloat)width withFont:(UIFont*)font
 {
     NSString *textToMeasure;
     
-    if(myText.length > 0)
+    if (myText.length > 0)
     {
         textToMeasure = myText;
     }
@@ -137,14 +139,16 @@ static NSString * const FORMHeadingLabelTextColorKey = @"heading_label_text_colo
         textToMeasure = @" ";
     }
     
-    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:[UIFont fontWithName:@"AvenirNext-DemiBold" size:14.0]}];
-    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(width*0.95, CGFLOAT_MAX)
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:textToMeasure attributes:@{NSFontAttributeName:font}];
+    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
                                                options:NSStringDrawingUsesLineFragmentOrigin
                                                context:nil];
     CGFloat textViewHeight = rect.size.height;
     
     return textViewHeight;
 }
+
+
 
 - (CGRect)separatorViewFrame {
     CGRect frame = self.frame;

@@ -1,8 +1,7 @@
 #import "FORMTextFieldCell.h"
 
 #import "FORMTooltipView.h"
-
-@import Hex;
+#import "UIColor+Hex.h"
 
 static NSString * const FORMHideTooltips = @"FORMHideTooltips";
 static const CGFloat FORMTooltipViewMinimumWidth = 90.0f;
@@ -45,9 +44,13 @@ static NSString * const FORMTooltipBackgroundColorKey = @"tooltip_background_col
                                                  name:FORMDismissTooltipNotification
                                                object:nil];
 
+    /*
+     Commented out to avoid overriding SceneDocFormViewController tap gesture which dismisses keyboard
+     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cellTapAction)];
     [self addGestureRecognizer:tapGestureRecognizer];
-
+     */
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(showTooltip:)
                                                  name:FORMHideTooltips
@@ -187,6 +190,7 @@ static NSString * const FORMTooltipBackgroundColorKey = @"tooltip_background_col
     self.textField.rawText         = [self rawTextForField:field];
     self.textField.info            = field.info;
     self.textField.styles          = field.styles;
+    self.textField.maxLength       = field.validation.maximumLength;
 }
 
 - (void)validate {
@@ -258,6 +262,8 @@ static NSString * const FORMTooltipBackgroundColorKey = @"tooltip_background_col
     [super layoutSubviews];
 
     self.textField.frame = [self textFieldFrame];
+    
+    [self validate];
 }
 
 - (CGRect)textFieldFrame {
@@ -320,15 +326,12 @@ static NSString * const FORMTooltipBackgroundColorKey = @"tooltip_background_col
 #pragma mark - FORMTextFieldDelegate
 
 - (void)textFormFieldDidBeginEditing:(FORMTextField *)textField {
-    [self performSelector:@selector(showTooltip) withObject:nil afterDelay:0.1f];
+    [self.formTextFieldCellDelegate beganEditing:self];
+    //[self performSelector:@selector(showTooltip) withObject:nil afterDelay:0.1f];
 }
 
 - (void)textFormFieldDidEndEditing:(FORMTextField *)textField {
     [self validate];
-
-    if (!self.textField.valid) {
-        [self.textField setValid:[self.field validate]];
-    }
 
     if (self.showTooltips) {
         [[NSNotificationCenter defaultCenter] postNotificationName:FORMDismissTooltipNotification
@@ -393,6 +396,32 @@ static NSString * const FORMTooltipBackgroundColorKey = @"tooltip_background_col
 - (void)showTooltip:(NSNotification *)notification {
     self.showTooltips = [notification.object boolValue];
 }
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#pragma mark - UIMenuController addition
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    if (action == @selector(scanBarcode:))
+    {
+        return YES;
+    }
+    
+    return [super canPerformAction:action withSender:sender];
+}
+
+
+
+- (void)scanBarcode:(id)sender
+{
+    if ([self.formTextFieldCellDelegate respondsToSelector:@selector(scanBarcodeOperationTextField:)])
+    {
+        [self.formTextFieldCellDelegate scanBarcodeOperationTextField:self];
+    }
+}
+
 
 #pragma mark - Private headers
 

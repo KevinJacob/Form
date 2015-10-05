@@ -24,7 +24,7 @@
 @protocol DropdownDelegate <NSObject>
 
 @optional
-- (void)presentDropdown:(UIViewController *)controller fromRect:(CGRect)rect;
+- (void)presentDropdown:(UIViewController *)controller fromRect:(CGRect)rect withCell:(FORMFieldValuesTableViewController *)cell;
 - (void)dropdownClosed;
 
 @end

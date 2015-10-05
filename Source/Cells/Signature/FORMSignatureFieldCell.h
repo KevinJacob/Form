@@ -47,7 +47,7 @@ static NSString * const FORMSignatureFieldCellIdentifier = @"FORMSignatureFieldC
 @protocol SignatureFieldDelegate <NSObject>
 
 @optional
-- (void)signatureViewClosed;
+- (void)signatureViewClosedAndSigned:(BOOL)didSign;
 - (NSString *)pathForSignatureFolder;
 
 @end

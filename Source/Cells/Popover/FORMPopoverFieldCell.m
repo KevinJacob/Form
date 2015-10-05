@@ -1,6 +1,5 @@
 #import "FORMPopoverFieldCell.h"
 #import "FORMTextFieldCell.h"
-#import "UIViewController+HYPTopViewController.h"
 
 static const CGFloat FORMIconButtonWidth = 32.0f;
 static const CGFloat FORMIconButtonHeight = 38.0f;
@@ -29,6 +28,7 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
     return self;
 }
+
 
 #pragma mark - Getters
 
@@ -89,6 +89,8 @@ static const CGFloat FORMIconButtonHeight = 38.0f;
 
     self.valueView.frame = [self fieldValueViewFrame];
     self.iconImageView.frame = [self iconImageViewFrame];
+    
+    [self validate];
 }
 
 - (CGRect)fieldValueViewFrame {

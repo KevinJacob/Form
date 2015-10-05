@@ -28,6 +28,8 @@ static const CGFloat FORMFieldCellLeftMargin = 10.0f;
 
 @property (nonatomic, weak) id <FORMBaseFieldCellDelegate> delegate;
 
+- (CGFloat)getHeightForText:(NSString *)myText withWidth:(CGFloat)width withFont:(UIFont*)font;
+
 - (void)updateFieldWithDisabled:(BOOL)disabled;
 - (void)updateWithField:(FORMFields *)field;
 - (void)validate;

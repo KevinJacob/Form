@@ -2,7 +2,7 @@
 #import "FORMTextFieldCell.h"
 #import "FORMFieldValue.h"
 
-static const NSInteger FORMSelectMaxItemCount = 6;
+//static const NSInteger FORMSelectMaxItemCount = 6;
 
 static const CGFloat FORMTextViewTopMargin = 30.0f;
 static const CGFloat FORMTextViewMargin = 10.0f;
@@ -121,21 +121,19 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
         self.fieldValuesController.fieldValue.selected = YES;
     }
     
-    if (self.field.values.count <= FORMSelectMaxItemCount) {
-        CGSize currentSize = [self popoverSize];
-        
-        self.fieldValuesController.preferredContentSize = currentSize;
-        [self.fieldValuesController.headerView updateLabelFrames:currentSize.width];
-        
-        if(self.fieldValuesController.selectedCell)
-        {
-            self.fieldValuesController.selectedCell.clearButton.frame = CGRectMake(currentSize.width - 40, 7, 30, 30);
-        }
-        
-        self.fieldValuesController.cancelButton.frame = CGRectMake(0, 0, 100, 35);
-        self.fieldValuesController.clearButton.frame = CGRectMake(currentSize.width/2 - 50, 0, 100, 35);
-        self.fieldValuesController.selectButton.frame = CGRectMake(currentSize.width - 100, 0, 100, 35);
+    CGSize currentSize = [self popoverSize];
+    
+    self.fieldValuesController.preferredContentSize = currentSize;
+    [self.fieldValuesController.headerView updateLabelFrames:currentSize.width];
+    
+    if(self.fieldValuesController.selectedCell)
+    {
+        self.fieldValuesController.selectedCell.selectedButton.frame = CGRectMake(currentSize.width - 40, 7, 30, 30);
     }
+    
+    self.fieldValuesController.cancelButton.frame = CGRectMake(0, 0, 100, 35);
+    self.fieldValuesController.clearButton.frame = CGRectMake(currentSize.width/2 - 50, 0, 100, 35);
+    self.fieldValuesController.selectButton.frame = CGRectMake(currentSize.width - 100, 0, 100, 35);
 }
 
 
@@ -219,16 +217,7 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     
     if(IS_IPAD())
     {
-        self.popoverController = [[UIPopoverController alloc] initWithContentViewController:self.fieldValuesController];
-        [self.popoverController setPopoverContentSize:self.fieldValuesController.tableView.contentSize animated:YES];
-        self.popoverController.delegate = self;
-        
-        if (!self.popoverController.isPopoverVisible) {
-            [self.popoverController presentPopoverFromRect:self.bounds
-                                                    inView:self
-                                  permittedArrowDirections:UIPopoverArrowDirectionAny
-                                                  animated:YES];
-        }
+        [self.dropdownDelegate presentDropdown:self.fieldValuesController fromRect:self.frame withCell:self.fieldValuesController];
     }
     else
     {
@@ -236,11 +225,11 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
         nav.modalPresentationStyle = UIModalPresentationPopover;
         [nav setNavigationBarHidden:YES];
         UIPopoverPresentationController *popover = nav.popoverPresentationController;
-        popover.permittedArrowDirections = UIPopoverArrowDirectionDown | UIPopoverArrowDirectionUp;
+        popover.permittedArrowDirections = UIPopoverArrowDirectionAny;
         popover.delegate = self;
         popover.sourceView = self;
         
-        [self.dropdownDelegate presentDropdown:nav fromRect:self.frame];
+        [self.dropdownDelegate presentDropdown:nav fromRect:self.frame withCell:self.fieldValuesController];
     }
 }
 
@@ -251,16 +240,6 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 - (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
 {
     return UIModalPresentationNone;
-}
-
--(void)popoverPresentationController:(UIPopoverPresentationController *)popoverPresentationController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing *)view
-{
-    [self updateContentViewController:self.fieldValuesController withField:self.field];
-}
-
--(void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView *__autoreleasing *)view
-{
-    [self updateContentViewController:self.fieldValuesController withField:self.field];
 }
 
 @end

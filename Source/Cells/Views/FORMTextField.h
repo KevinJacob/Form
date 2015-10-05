@@ -42,6 +42,7 @@ typedef NS_ENUM(NSInteger, FORMTextFieldInputType) {
 @property (nonatomic) FORMInputValidator *inputValidator;
 @property (nonatomic) FORMFormatter *formatter;
 
+@property (nonatomic, retain) NSNumber* maxLength;
 @property (nonatomic, copy) NSString *typeString;
 @property (nonatomic) FORMTextFieldType type;
 @property (nonatomic, copy) NSString *inputTypeString;

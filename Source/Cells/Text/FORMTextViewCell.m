@@ -77,8 +77,12 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
                                                  name:FORMDismissTooltipNotification
                                                object:nil];
     
+    /*
+     Commented out to avoid overriding SceneDocFormViewController tap gesture which dismisses keyboard
+     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cellTapAction)];
     [self addGestureRecognizer:tapGestureRecognizer];
+    */
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(showTooltip:)
@@ -232,6 +236,8 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 
     self.textView.frame = [self textViewFrame];
     self.textView.textContainerInset = UIEdgeInsetsMake(12, 5, 10, 25);
+    
+    [self validate];
 }
 
 
@@ -374,7 +380,8 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 
 - (void)textFormViewDidBeginEditing:(FORMTextView *)textView
 {
-    [self performSelector:@selector(showTooltip) withObject:nil afterDelay:0.1f];
+    [self.formTextViewCellDelegate beganEditing:self];
+    //[self performSelector:@selector(showTooltip) withObject:nil afterDelay:0.1f];
 }
 
 
@@ -524,6 +531,31 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#pragma mark - UIMenuController addition
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    if (action == @selector(scanBarcode:))
+    {
+        return YES;
+    }
+    
+    return [super canPerformAction:action withSender:sender];
+}
+
+
+
+- (void)scanBarcode:(id)sender
+{
+    if ([self.formTextViewCellDelegate respondsToSelector:@selector(scanBarcodeOperationTextView:)])
+    {
+        [self.formTextViewCellDelegate scanBarcodeOperationTextView:self];
+    }
+}
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #pragma mark - FORMBaseFormFieldCell
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -543,6 +575,9 @@ static const CGFloat FORMTextViewInsideMargin = 12.0f;
     self.textView.rawText                      = [self rawTextForField:field];
     self.textView.hidden                       = (field.sectionSeparator);
     self.textView.userInteractionEnabled       = !field.disabled;
+    self.textView.maxLength                    = field.validation.maximumLength;
+    [self.textView setEnabled:!field.disabled];
+    [self validate];
     
     CGFloat initalHeight = self.textView.frame.size.height;
     self.textView.frame = [self textViewFrame];

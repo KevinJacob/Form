@@ -16,6 +16,8 @@
     
     
     self.detailTextLabel.textAlignment = NSTextAlignmentLeft;
+    self.detailTextLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.detailTextLabel.numberOfLines = 0;
 
     self.selectionStyle = UITableViewCellSelectionStyleGray;
     self.backgroundColor = [UIColor whiteColor];
@@ -25,12 +27,12 @@
     self.selectedBackgroundView = selectedBackgroundView;
     self.separatorInset = UIEdgeInsetsZero;
 
-    UIButton *clear = [UIButton buttonWithType:UIButtonTypeCustom];
-    [clear setImage:[UIImage imageNamed:@"checkmarkCircleIcon"] forState:UIControlStateNormal];
-    clear.frame = CGRectMake(self.frame.size.width - 40, 7, 30, 30);
-    clear.hidden = YES;
-    self.clearButton = clear;
-    [self.contentView addSubview:clear];
+    UIButton *selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [selectedButton setImage:[UIImage imageNamed:@"checkmarkCircleIcon"] forState:UIControlStateNormal];
+    selectedButton.frame = CGRectMake(self.frame.size.width - 40, 7, 30, 30);
+    selectedButton.hidden = YES;
+    self.selectedButton = selectedButton;
+    [self.contentView addSubview:selectedButton];
     
     return self;
 }
@@ -42,7 +44,7 @@
     _fieldValue = fieldValue;
 
     self.textLabel.text = fieldValue.title;
-    self.clearButton.hidden = !fieldValue.selected;
+    self.selectedButton.hidden = !fieldValue.selected;
 
     if (fieldValue.info) {
         self.detailTextLabel.text = fieldValue.info;

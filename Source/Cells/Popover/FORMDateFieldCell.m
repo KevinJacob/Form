@@ -6,9 +6,9 @@
 
 static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
 
-@interface FORMDateFieldCell () <FORMTextFieldDelegate, FORMFieldValuesTableViewControllerDelegate>
+@interface FORMDateFieldCell () <FORMTextFieldDelegate, FORMFieldValuesTableViewControllerDelegate, UIPopoverControllerDelegate>
 
-@interface FORMDateFieldCell () <FORMTextFieldDelegate>
+@property (nonatomic) UIDatePicker *datePicker;
 
 @end
 
@@ -46,19 +46,13 @@ static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
 {
     RMAction *selectAction = [RMAction actionWithTitle:@"Select" style:RMActionStyleDone andHandler:^(RMActionController *controller)
     {
-        switch (self.field.type) {
-            case FORMFieldTypeDate:
-                self.field.value = [((UIDatePicker *)controller.contentView).date displayDate];
-                break;
-            case FORMFieldTypeDateTime:
-                self.field.value = [((UIDatePicker *)controller.contentView).date displayDateTime];
-                break;
-            case FORMFieldTypeTime:
-                self.field.value = [((UIDatePicker *)controller.contentView).date displayTime];
-                break;
-            default:
-                break;
-        }
+        
+        NSDateFormatter *df = [[NSDateFormatter alloc]init];
+        [df setTimeZone:[NSTimeZone systemTimeZone]];
+        [df setDateFormat:@"yyyy-MM-dd'T'HH:mm:00ZZZ"];
+        
+        NSString *dateSelected = [df stringFromDate:((UIDatePicker *)controller.contentView).date];
+        self.field.value = dateSelected;
         
         [self updateWithField:self.field];
         [self validate];
@@ -113,11 +107,29 @@ static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
     }];
     [self.dateController addAction:clearAction];
     
-    [self.dropdownDelegate presentDropdown:self.dateController fromRect:self.frame];
+    [self.dropdownDelegate presentDropdown:self.dateController fromRect:self.frame  withCell:nil];
 }
+
+
+#pragma mark - Setters
+
+- (void)setDate:(NSDate *)date {
+    _date = date;
+    
+    if (_date) self.datePicker.date = _date;
+}
+
+- (void)setMinimumDate:(NSDate *)minimumDate {
+    _minimumDate = minimumDate;
+    
+    self.datePicker.minimumDate = _minimumDate;
+}
+
 - (void)setMaximumDate:(NSDate *)maximumDate {
-
-
+    _maximumDate = maximumDate;
+    
+    self.datePicker.maximumDate = _maximumDate;
+}
 
 #pragma mark - Actions
 
@@ -128,11 +140,28 @@ static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
 #pragma mark - FORMBaseFormFieldCell
 
 - (void)updateWithField:(FORMFields *)field {
-    [super updateWithField:field];
 
-    if (field.value) {
-        self.valueView.text = field.value;
-    } else {
+    [super updateWithField:field];
+    
+    if (field.value)
+    {
+        NSDate *fullDateValue = [NSDate dateFromUTCdateString:field.value];
+        
+        if (field.type == FORMFieldTypeTime)
+        {
+            self.valueView.text = [fullDateValue displayTime];
+        }
+        else if (field.type == FORMFieldTypeDate)
+        {
+            self.valueView.text = [fullDateValue displayDate];
+        }
+        else if (field.type == FORMFieldTypeDateTime)
+        {
+            self.valueView.text = [fullDateValue displayDateTime];
+        }
+    }
+    else
+    {
         self.valueView.text = nil;
     }
 
@@ -166,12 +195,10 @@ static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
 
 #pragma mark - FORMPopoverFormFieldCell
 
-- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMField *)field {
+- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMFields *)field {
     self.fieldValuesController.field = self.field;
     
     contentViewController.preferredContentSize = FORMDatePopoverSize;
-
-- (void)updateContentViewController:(UIViewController *)contentViewController withField:(FORMFields *)field {
 
     if (self.field.value) {
         self.dateController.datePicker.date = [NSDate date];
@@ -187,12 +214,29 @@ static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
 }
 
 
+#pragma mark - FORMFieldValuesTableViewControllerDelegate
+    
 - (void)fieldValuesTableViewController:(FORMFieldValuesTableViewController *)fieldValuesTableViewController
-                      didSelectedValue:(FORMFieldValue *)selectedValue {
+                                                                            didSelectedValue:(FORMFieldValue *)selectedValue
+{
     if ([selectedValue.value boolValue] == YES) {
         self.field.value = self.datePicker.date;
     } else {
         self.field.value = nil;
+    }
+    
+    [self updateWithField:self.field];
+    
+    [self validate];
+    
+    [fieldValuesTableViewController dismissViewControllerAnimated:YES completion:nil];
+    
+    if ([self.delegate respondsToSelector:@selector(fieldCell:updatedWithField:)]) {
+        [self.delegate fieldCell:self updatedWithField:self.field];
+    }
+}
+    
+    
 #pragma mark - Private methods
 
 - (BOOL)becomeFirstResponder {
@@ -201,8 +245,6 @@ static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
     return [super becomeFirstResponder];
 }
 
-
-    [fieldValuesTableViewController dismissViewControllerAnimated:YES completion:nil];
 
 - (void)titleLabelPressed:(FORMDropDownValueView *)titleLabel {
     [[NSNotificationCenter defaultCenter] postNotificationName:FORMResignFirstResponderNotification object:nil];
@@ -214,3 +256,4 @@ static const CGSize FORMDatePopoverSize = { 320.0f, 284.0f };
 
 
 @end
+

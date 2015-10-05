@@ -80,6 +80,14 @@ static BOOL enabledProperty;
 
 
 
+-(void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    self.clearButton.frame = CGRectMake(self.frame.size.width - FORMTextViewClearButtonWidth, 12, FORMTextViewClearButtonWidth, FORMTextViewClearButtonHeight);
+}
+
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #pragma mark - Setters
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -276,15 +284,21 @@ static BOOL enabledProperty;
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    if (!text || [text isEqualToString:@"\n"]) return YES;
-    
-    BOOL validator = (self.inputValidator &&
-                      [self.inputValidator respondsToSelector:@selector(validateReplacementString:withText:withRange:)]);
-    
-    if (validator) return [self.inputValidator validateReplacementString:text
-                                                                withText:self.rawText withRange:range];
-    
-    return YES;
+    if(self.maxLength)
+    {
+        if((textView.text.length + text.length) > [self.maxLength integerValue])
+        {
+            return NO;
+        }
+        else
+        {
+            return YES;
+        }
+    }
+    else
+    {
+        return YES;
+    }
 }
 
 
